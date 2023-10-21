@@ -29,6 +29,10 @@ There are three main steps:
 
 ### Extracting information with a LLM
 
+## Modifying and testing the code
+
+Use the CLI code in `cli.py` to test modifications to the code. It's easier to debug code in a CLI than in a Streamlit app.
+
 ## Preparing the environment
 
 This is a one-time step. If you have already done this, just activate the virtual environment with `source venv/bin/activate`.
