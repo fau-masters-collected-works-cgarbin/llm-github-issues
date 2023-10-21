@@ -1,0 +1,6 @@
+.DS_Store
+venv
+__pycache__
+
+# Keys go here, so never commit it
+.env
