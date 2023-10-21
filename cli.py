@@ -16,7 +16,7 @@ def get_option():
     print("2. Run test")
     print("3. Show raw GitHub issue data")
     print("4. Show parsed GitHub issue data")
-    print("5. Show LLM results")
+    print("5. Show LLM response")
     print("9. Exit")
     choice = input("Enter your choice: ")
     return choice
@@ -37,16 +37,20 @@ def get_github_data(repository, issue_number):
     return issue, comments
 
 
-def get_llm_answer(parsed_issue, parsed_comments):
+def get_llm_answer(prompt, parsed_issue, parsed_comments):
     """Get the LLM answer."""
     user_input = f"{parsed_issue}\n{parsed_comments}"
-    response = llm.chat_completion(llm.SYSTEM_PROMPT, user_input)
+    response = llm.chat_completion(prompt, user_input)
     return response.llm_response
 
 
 def main():
     """Run the CLI."""
     llm.initialize()
+
+    # Read the prompt from the file
+    with open("llm_prompt.txt", "r", encoding="UTF-8") as file:
+        prompt = file.read()
 
     repository = ''
     issue_number = 0
@@ -66,7 +70,7 @@ def main():
             parsed_issue = github.parse_issue(issue)
             parsed_comments = github.parse_comments(comments)
             print("Getting response from LLM (may take a few seconds)...")
-            response = get_llm_answer(parsed_issue, parsed_comments)
+            response = get_llm_answer(prompt, parsed_issue, parsed_comments)
             print("Done")
         elif choice == "3":
             print("Raw GitHub issue data:")

@@ -10,18 +10,6 @@ import dotenv
 from openai import OpenAI
 
 MODEL = "gpt-3.5-turbo"
-
-SYSTEM_PROMPT = "You are an experience developer familiar with GitHub issues." + \
-                "The following text has been parsed from a GitHub issue." + \
-                "Answer the request using the information provided.\n" + \
-                "Extract the following information from the issue and comments:\n" +\
-                " - A brief summary of the issue in exactly one short sentence of no more 50 words.\n" + \
-                " - A more extended summary of the issue." + \
-                "   If code has been provided, list to the relevant pieces of code in the summary.\n" + \
-                " - A summary of each comment in chronological order as a markdown table with the columns date," + \
-                "   author, summary"
-
-
 CLIENT = None
 
 

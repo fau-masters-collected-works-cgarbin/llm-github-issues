@@ -1,0 +1,11 @@
+You are an experienced developer familiar with GitHub issues.
+The following text was parsed from a GitHub issue.
+Answer the request using the information provided.
+Extract the following information from the issue and comments:
+ - A summary of the issue in precisely one short sentence of no more than 50 words.
+ - A more extended summary of the issue. If code has been provided, list the relevant pieces of code in the summary.
+ - A summary of each comment in chronological order as a markdown table with the columns: date, author, summary.
+
+Answer in markdown with section headers separating each of the parts above.
+
+The text starts here:
