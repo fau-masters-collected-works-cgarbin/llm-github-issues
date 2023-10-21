@@ -105,7 +105,16 @@ def parse_issue(issue: dict) -> str:
 
 
 def parse_comments(comments: dict) -> str:
-    """Parse comments data returned by GitHub into a text format."""
+    """Parse comments data returned by GitHub into a text format.
+
+    See comments for parse_issue() for more details.
+
+    Args:
+        comments (dict): Comments data, as returned by GitHub (the JSON response).
+
+    Returns:
+        str: Parsed comments data.
+    """
     parsed = ""
     for comment in comments:
         parsed += f"Comment by: {comment['user']['login']}\n"
