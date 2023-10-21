@@ -121,16 +121,3 @@ def parse_comments(comments: dict) -> str:
         parsed += f"Comment on: {comment['created_at']}\n"
         parsed += f"Body (between '''):\n'''\n{comment['body']}\n'''\n"
     return parsed
-
-
-# Example usage
-issue, error = get_issue("https://github.com/openai/openai-python", 650)
-if error:
-    print(f"Error: {error}")
-else:
-    print(parse_issue(issue))
-comments, error = get_issue_comments(issue)
-if error:
-    print(f"Error: {error}")
-else:
-    print(parse_comments(comments))
