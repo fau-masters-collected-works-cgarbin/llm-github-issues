@@ -1,9 +1,7 @@
-# The tools for this project are still rapidly evolving
-# We specify the versions to avoid breaking changes
+# TODO: Replace with the 1.x official release once it's out
+openai --pre
 
-
-# These are supporting tools
-# We don't need the exact minor version
+python-dotenv ~= 1.0
 requests ~= 2.31
 streamlit ~= 1.27
 
