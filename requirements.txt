@@ -1,5 +1,6 @@
+# openai is installed manually -- see README
 # TODO: Replace with the 1.x official release once it's out
-openai --pre
+# openai ~= 1.0
 
 python-dotenv ~= 1.0
 requests ~= 2.31

@@ -61,4 +61,8 @@ python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
+
+# Install the new OpenAI Python package manually until it is released
+# See comments in requirements.txt for more information
+pip install --pre openai
 ```
