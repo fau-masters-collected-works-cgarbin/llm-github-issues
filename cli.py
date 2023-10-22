@@ -6,7 +6,7 @@ Some test data to use:
     This one has a short description and lots of pieces of code. The summarization needs to consider the text
     before and after the code blocks to get the context right.
      - https://github.com/openai/openai-python
-     - 650
+     - 488
 
      - https://github.com/openai/openai-python
      - 650
