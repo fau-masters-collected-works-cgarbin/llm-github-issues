@@ -69,8 +69,6 @@ def get_model_and_prompt():
 
 def main():
     """Run the CLI."""
-    llm.initialize()
-
     repository = ""
     issue_number = 0
     issue, comments, parsed_issue, parsed_comments = None, None, None, None

@@ -9,14 +9,12 @@ from typing import Optional
 import dotenv
 from openai import OpenAI
 
-CLIENT = None
-
 
 @dataclass
 class LLMResponse:
     """Class to hold the LLM response.
 
-    We use a class instead of returning the native LLM response to make it easier to adapt to different LLMs later.
+    We use our class instead of returning the native LLM response to make it easier to adapt to different LLMs later.
     """
     system_prompt: Optional[str] = None
     user_input: Optional[str] = None
@@ -25,24 +23,23 @@ class LLMResponse:
     output_tokens: Optional[int] = None
 
 
-def initialize() -> None:
-    """Initialize the LLM.
-
-    This must be called before any other functions in this module.
-    """
+def _get_openai_client() -> None:
+    """Get a client for OpenAI."""
     dotenv.load_dotenv()
     api_key = os.getenv("OPENAI_API_KEY")
 
     if not api_key:
         raise EnvironmentError("OPENAI_API_KEY environment variable not set -- see README.md for instructions")
 
-    global CLIENT
-    CLIENT = OpenAI(api_key=api_key)
+    return OpenAI(api_key=api_key)
 
 
 def _openai_chat_completion(model: str, system_prompt: str, user_input: str) -> LLMResponse:
     """Get a completion from OpenAI."""
-    completion = CLIENT.chat.completions.create(
+    # Always instantiate a new client to pick up configuration changes without restarting the program
+    client = _get_openai_client()
+
+    completion = client.chat.completions.create(
         model=model,
         messages=[
             {"role": "system", "content": system_prompt},
@@ -61,4 +58,6 @@ def _openai_chat_completion(model: str, system_prompt: str, user_input: str) -> 
 def chat_completion(model, prompt: str, user_input: str) -> LLMResponse:
     """Get a completion from the LLM."""
     # Only one LLM is currently supported. This function can be extended to support multiple LLMs later.
-    return _openai_chat_completion(model, prompt, user_input)
+    if model.startswith("gpt"):
+        return _openai_chat_completion(model, prompt, user_input)
+    raise ValueError(f"Unsupported model: {model}")
