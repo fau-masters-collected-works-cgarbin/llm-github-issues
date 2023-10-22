@@ -3,23 +3,30 @@ import requests
 
 
 def _get_github_api_url(repo: str) -> str:
-    """Get GitHub API URL for a repository, accpeting a flexible range of inputs.
+    """Get GitHub API URL for a repository, accepting a flexible range of inputs.
 
     Args:
         repo (str): Repository in the form "user/repo" or full repository URL.
 
     Returns:
-        str: GitHub API URL.
+        str: GitHub issues API URL for the repository.
     """
     if repo.startswith("https://api.github.com/repos/"):
         # Assume it's already a GitHub API URL
+        if repo.endswith("/"):
+            repo = repo[:-1]
         return repo
 
     # Assume it's a GitHub repository URL and accept a flexible range of inputs
+    # Normalize the URL
     if repo.startswith("https://github.com/"):
         repo = repo.replace("https://github.com/", "")
     if repo.endswith(".git"):
         repo = repo[:-4]
+    if repo.endswith("/"):
+        repo = repo[:-1]
+
+    # Create the GitHub API URL from the normalized URL
     if "/" in repo:
         return f"https://api.github.com/repos/{repo}"
 
