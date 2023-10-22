@@ -2,13 +2,19 @@
 """A simple command-line interface for running tests.
 
 Some test data to use:
+
+    This one has a short description and lots of pieces of code. The summarization needs to consider the text
+    before and after the code blocks to get the context right.
+     - https://github.com/openai/openai-python
+     - 650
+
      - https://github.com/openai/openai-python
      - 650
 
      - https://github.com/scikit-learn/scikit-learn
      - 27435
 
-    This one doesn't fit in the standard GPT-3.5 context window - good test for the 16k token version:
+    This one doesn't fit in the standard GPT-3.5 context window - good test for the 16k token version.
      - https://github.com/scikit-learn/scikit-learn
      - 26817
 """
@@ -80,7 +86,8 @@ def main():
                 issue_number = input("Enter issue number: ")
             print("Getting issue data from GitHub...")
             issue, comments = get_github_data(repository, issue_number)
-            if not issue or not comments:
+            if not issue:
+                print("GitHub returned and empty issue")
                 continue
             parsed_issue = github.parse_issue(issue)
             parsed_comments = github.parse_comments(comments)
@@ -88,7 +95,8 @@ def main():
             continue
 
         # Don't run options that require GitHub data if we don't have it
-        if choice in ("2", "3", "4") and (not issue or not comments):
+        # Note that we check only the issue because not having comments is not an error
+        if choice in ("2", "3", "4") and not issue:
             print("Retrieve the GitHub issue data first")
             continue
 
