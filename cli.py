@@ -2,8 +2,15 @@
 """A simple command-line interface for running tests.
 
 Some test data to use:
-     - Repository: https://github.com/openai/openai-python
-     - Issue number: 650
+     - https://github.com/openai/openai-python
+     - 650
+
+     - https://github.com/scikit-learn/scikit-learn
+     - 27435
+
+    This one doesn't fit in the standard GPT-3.5 context window - good test for the 16k token version:
+     - https://github.com/scikit-learn/scikit-learn
+     - 26817
 """
 import github
 import llm
