@@ -12,6 +12,7 @@ Some test data to use:
      - https://github.com/scikit-learn/scikit-learn
      - 26817
 """
+import configparser
 import github
 import llm
 
@@ -44,11 +45,23 @@ def get_github_data(repository, issue_number):
     return issue, comments
 
 
-def get_llm_answer(prompt, parsed_issue, parsed_comments):
+def get_llm_answer(parsed_issue, parsed_comments):
     """Get the LLM answer."""
+    # Always read the config file to allow for changes without restarting the CLI
+    model, prompt = get_model_and_prompt()
     user_input = f"{parsed_issue}\n{parsed_comments}"
-    response = llm.chat_completion(prompt, user_input)
+    response = llm.chat_completion(model, prompt, user_input)
     return response.llm_response
+
+
+def get_model_and_prompt():
+    """Get the model and prompt from the config file."""
+    # Always read the config file to allow for changes without restarting the CLI
+    config = configparser.ConfigParser()
+    config.read("llm.ini")
+    model = config["LLM"]["model"]
+    prompt = config["LLM"]["prompt"]
+    return model, prompt
 
 
 def main():
@@ -58,6 +71,8 @@ def main():
     repository = ""
     issue_number = 0
     issue, comments, parsed_issue, parsed_comments = None, None, None, None
+
+    get_model_and_prompt() ########
 
     while True:
         choice = get_option()
@@ -95,12 +110,8 @@ def main():
             print("\n-------------------------------")
             print(f"Comments:\n{parsed_comments}")
         elif choice == "5":
-            # Read the prompt from the file every time we run the test to allow faster prompt testing
-            with open("llm_prompt.txt", "r", encoding="UTF-8") as file:
-                prompt = file.read()
-
             print("Getting response from LLM (may take a few seconds)...")
-            response = get_llm_answer(prompt, parsed_issue, parsed_comments)
+            response = get_llm_answer(parsed_issue, parsed_comments)
             print(f"LLM Response:\n{response}")
         elif choice == "9":
             print("Exiting...")

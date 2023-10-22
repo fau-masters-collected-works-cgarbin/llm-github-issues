@@ -9,7 +9,6 @@ from typing import Optional
 import dotenv
 from openai import OpenAI
 
-MODEL = "gpt-3.5-turbo"
 CLIENT = None
 
 
@@ -41,10 +40,10 @@ def initialize() -> None:
     CLIENT = OpenAI(api_key=api_key)
 
 
-def _openai_chat_completion(system_prompt: str, user_input: str) -> LLMResponse:
+def _openai_chat_completion(model: str, system_prompt: str, user_input: str) -> LLMResponse:
     """Get a completion from OpenAI."""
     completion = CLIENT.chat.completions.create(
-        model=MODEL,
+        model=model,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_input},
@@ -59,7 +58,7 @@ def _openai_chat_completion(system_prompt: str, user_input: str) -> LLMResponse:
     return answer
 
 
-def chat_completion(system_prompt: str, user_input: str) -> LLMResponse:
+def chat_completion(model, prompt: str, user_input: str) -> LLMResponse:
     """Get a completion from the LLM."""
     # Only one LLM is currently supported. This function can be extended to support multiple LLMs later.
-    return _openai_chat_completion(system_prompt, user_input)
+    return _openai_chat_completion(model, prompt, user_input)
