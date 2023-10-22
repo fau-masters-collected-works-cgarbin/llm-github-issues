@@ -50,8 +50,11 @@ def get_llm_answer(parsed_issue, parsed_comments):
     # Always read the config file to allow for changes without restarting the CLI
     model, prompt = get_model_and_prompt()
     user_input = f"{parsed_issue}\n{parsed_comments}"
-    response = llm.chat_completion(model, prompt, user_input)
-    return response.llm_response
+    try:
+        response = llm.chat_completion(model, prompt, user_input)
+        return response.llm_response
+    except Exception as err:
+        return err
 
 
 def get_model_and_prompt():
@@ -72,13 +75,12 @@ def main():
     issue_number = 0
     issue, comments, parsed_issue, parsed_comments = None, None, None, None
 
-    get_model_and_prompt() ########
-
     while True:
         choice = get_option()
         if choice == "1":
             repository = input("Enter GitHub repository name: ")
             issue_number = input("Enter issue number: ")
+            issue, comments = None, None  # Reset to not use old data
             continue
         if choice == "2":
             if not repository or not issue_number:
@@ -96,7 +98,7 @@ def main():
 
         # Don't run options that require GitHub data if we don't have it
         if choice in ("3", "4", "5") and (not issue or not comments):
-            print("No GitHub issue data available")
+            print("Retrieve the GitHub issue data first")
             continue
 
         if choice == "3":
