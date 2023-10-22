@@ -38,7 +38,7 @@ def _invoke_github_api(repo: str, endpoint: str) -> (dict, str):
 
     Args:
         repo (str): Repository in the form "user/repo" or "https://..."
-        endpoint (str): API endpoint and its parameters, e.g. "issues?state=open&sort=created&direction=desc".
+        endpoint (str): API endpoint and its parameters, e.g. "issues/1234".
     """
     url = _get_github_api_url(repo)
     if endpoint:
@@ -69,6 +69,9 @@ def get_issue(repo: str, issue_id: str) -> (dict, str):
         dict: Issue data.
         str: Error message, if any.
     """
+    if "/issues/" in repo:
+        # Assume it's already a fully-formed GitHub issue API URL
+        return _invoke_github_api(repo, "")
     return _invoke_github_api(repo, f"issues/{issue_id}")
 
 

@@ -21,10 +21,9 @@ def get_option():
     """Show the menu and ask for an option."""
     print("\nMENU:")
     print("1. Enter the repository and issue number")
-    print("2. Get the GitHub issue data")
-    print("3. Show the raw GitHub issue data")
-    print("4. Show the parsed GitHub issue data")
-    print("5. Get and show the LLM response")
+    print("2. Show the raw GitHub issue data")
+    print("3. Show the parsed GitHub issue data")
+    print("4. Get and show the LLM response")
     print("9. Exit")
     choice = input("Enter your choice: ")
     return choice
@@ -76,40 +75,34 @@ def main():
     while True:
         choice = get_option()
         if choice == "1":
-            repository = input("Enter GitHub repository name: ")
-            issue_number = input("Enter issue number: ")
-            issue, comments = None, None  # Reset to not use old data
-            continue
-        if choice == "2":
-            if not repository or not issue_number:
-                print("Enter the repository and issue number first")
-                continue
+            repository = input("Enter GitHub repository name or issue URL: ")
+            if "/issues/" not in repository:
+                issue_number = input("Enter issue number: ")
             print("Getting issue data from GitHub...")
             issue, comments = get_github_data(repository, issue_number)
             if not issue or not comments:
                 continue
-
             parsed_issue = github.parse_issue(issue)
             parsed_comments = github.parse_comments(comments)
             print("Done")
             continue
 
         # Don't run options that require GitHub data if we don't have it
-        if choice in ("3", "4", "5") and (not issue or not comments):
+        if choice in ("2", "3", "4") and (not issue or not comments):
             print("Retrieve the GitHub issue data first")
             continue
 
-        if choice == "3":
+        if choice == "2":
             print("Raw GitHub issue data:")
             print(f"Issue from GitHub:\n{issue}")
             print("\n-------------------------------")
             print(f"Comments from GitHub:\n{comments}")
-        elif choice == "4":
+        elif choice == "3":
             print("Parsed GitHub issue data:")
             print(f"Issue:\n{parsed_issue}")
             print("\n-------------------------------")
             print(f"Comments:\n{parsed_comments}")
-        elif choice == "5":
+        elif choice == "4":
             print("Getting response from LLM (may take a few seconds)...")
             response = get_llm_answer(parsed_issue, parsed_comments)
             print(f"LLM Response:\n{response}")
