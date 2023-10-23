@@ -17,6 +17,12 @@ Some test data to use:
     This one doesn't fit in the standard GPT-3.5 context window - good test for the 16k token version.
      - https://github.com/scikit-learn/scikit-learn
      - 26817
+
+    This one has several comments. The large list of comments seems to cause the LLM to stop summarizing
+    then mid-way through the issue (tested with GPT-3.5).
+    The first comment also highlights a security issue: it has a link in a markdown text. The summary
+    has the link, which can be used for phishing and other attacks.
+    - https://github.com/qjebbs/vscode-plantuml/issues/255
 """
 import configparser
 import github
