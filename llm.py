@@ -21,6 +21,7 @@ class LLMResponse:
     llm_response: Optional[str] = None
     input_tokens: Optional[int] = None
     output_tokens: Optional[int] = None
+    raw_response: Optional[dict] = None
 
 
 def _get_openai_client() -> None:
@@ -47,12 +48,13 @@ def _openai_chat_completion(model: str, system_prompt: str, user_input: str) -> 
         ],
         temperature=0.0  # We want precise and repeatable results
     )
-    answer = LLMResponse()
-    answer.system_prompt = system_prompt
-    answer.user_input = user_input
-    answer.llm_response = completion.choices[0].message.content
+    response = LLMResponse()
+    response.system_prompt = system_prompt
+    response.user_input = user_input
+    response.llm_response = completion.choices[0].message.content
+    response.raw_response = completion
 
-    return answer
+    return response
 
 
 def chat_completion(model, prompt: str, user_input: str) -> LLMResponse:
