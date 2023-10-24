@@ -33,7 +33,7 @@ def _get_github_api_url(repo: str) -> str:
     raise ValueError("Invalid repository format. Must be in the form 'user/repo' or full repository URL.")
 
 
-def _invoke_github_api(repo: str, endpoint: str) -> (dict, str):
+def _invoke_github_api(repo: str, endpoint: str) -> dict:
     """Invoke the GitHub API for a repository.
 
     Args:
@@ -44,30 +44,21 @@ def _invoke_github_api(repo: str, endpoint: str) -> (dict, str):
     if endpoint:
         url = f"{url}/{endpoint}"
 
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        return response.json(), None
-    except requests.exceptions.HTTPError as errh:
-        return None, f"HTTP Error: {errh}"
-    except requests.exceptions.ConnectionError as errc:
-        return None, f"Connection Error: {errc}"
-    except requests.exceptions.Timeout as errt:
-        return None, f"Timeout Error: {errt}"
-    except requests.exceptions.RequestException as err:
-        return None, f"Something went wrong: {err}"
+    response = requests.get(url, timeout=10)
+    response.raise_for_status()
+    return response.json()
 
 
-def get_issue(repo: str, issue_id: str) -> (dict, str):
+def get_issue(repo: str, issue_id: str = "") -> dict:
     """Get a specific issue from GitHub.
 
     Args:
-        repo (str): Repository in the form "user/repo" or "https://github.com/...".
-        issue_id (int): Issue number.
+        repo (str): Repository in the form "user/repo" or the full URL to the issue, e.g.
+        "https://github.com/qjebbs/vscode-plantuml/issues/255".
+        issue_id (int): Issue number. Optional if the URL already contains the issue number.
 
     Returns:
         dict: Issue data.
-        str: Error message, if any.
     """
     if "/issues/" in repo:
         # Assume it's already a fully-formed GitHub issue API URL
@@ -75,7 +66,7 @@ def get_issue(repo: str, issue_id: str) -> (dict, str):
     return _invoke_github_api(repo, f"issues/{issue_id}")
 
 
-def get_issue_comments(issue: dict) -> (dict, str):
+def get_issue_comments(issue: dict) -> dict:
     """Get comments for a specific issue.
 
     Args:
@@ -83,7 +74,6 @@ def get_issue_comments(issue: dict) -> (dict, str):
 
     Returns:
         dict: Comments data.
-        str: Error message, if any.
     """
     return _invoke_github_api(issue["comments_url"], "")
 

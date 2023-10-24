@@ -43,16 +43,8 @@ def get_option():
 
 def get_github_data(repository, issue_number):
     """Get the issue and comments from GitHub."""
-    issue, error = github.get_issue(repository, issue_number)
-    if error:
-        print(error)
-        return None, None
-
-    comments, error = github.get_issue_comments(issue)
-    if error:
-        print(error)
-        return None, None
-
+    issue = github.get_issue(repository, issue_number)
+    comments = github.get_issue_comments(issue)
     return issue, comments
 
 
@@ -61,11 +53,8 @@ def get_llm_answer(parsed_issue, parsed_comments):
     # Always read the config file to allow for changes without restarting the CLI
     model, prompt = get_model_and_prompt()
     user_input = f"{parsed_issue}\n{parsed_comments}"
-    try:
-        response = llm.chat_completion(model, prompt, user_input)
-        return response.llm_response
-    except Exception as err:
-        return err
+    response = llm.chat_completion(model, prompt, user_input)
+    return response.llm_response
 
 
 def get_model_and_prompt():
@@ -85,46 +74,50 @@ def main():
     issue, comments, parsed_issue, parsed_comments = None, None, None, None
 
     while True:
-        choice = get_option()
-        if choice == "1":
-            repository = input("Enter GitHub repository name or issue URL: ")
-            if "/issues/" not in repository:
-                issue_number = input("Enter issue number: ")
-            print("Getting issue data from GitHub...")
-            issue, comments = get_github_data(repository, issue_number)
-            if not issue:
-                print("GitHub returned and empty issue")
+        try:
+            choice = get_option()
+            if choice == "1":
+                repository = input("Enter GitHub repository name or issue URL: ")
+                if "/issues/" not in repository:
+                    issue_number = input("Enter issue number: ")
+                print("Getting issue data from GitHub...")
+                issue, comments = get_github_data(repository, issue_number)
+                if not issue:
+                    print("GitHub returned and empty issue")
+                    continue
+                parsed_issue = github.parse_issue(issue)
+                parsed_comments = github.parse_comments(comments)
+                print("Done")
                 continue
-            parsed_issue = github.parse_issue(issue)
-            parsed_comments = github.parse_comments(comments)
-            print("Done")
-            continue
 
-        # Don't run options that require GitHub data if we don't have it
-        # Note that we check only the issue because not having comments is not an error
-        if choice in ("2", "3", "4") and not issue:
-            print("Retrieve the GitHub issue data first")
-            continue
+            # Don't run options that require GitHub data if we don't have it
+            # Note that we check only the issue because not having comments is not an error
+            if choice in ("2", "3", "4") and not issue:
+                print("Retrieve the GitHub issue data first")
+                continue
 
-        if choice == "2":
-            print("Raw GitHub issue data:")
-            print(f"Issue from GitHub:\n{issue}")
-            print("\n-------------------------------")
-            print(f"Comments from GitHub:\n{comments}")
-        elif choice == "3":
-            print("Parsed GitHub issue data:")
-            print(f"Issue:\n{parsed_issue}")
-            print("\n-------------------------------")
-            print(f"Comments:\n{parsed_comments}")
-        elif choice == "4":
-            print("Getting response from LLM (may take a few seconds)...")
-            response = get_llm_answer(parsed_issue, parsed_comments)
-            print(f"LLM Response:\n{response}")
-        elif choice == "9":
-            print("Exiting...")
-            break
-        else:
-            input("Invalid choice. Press Enter to continue...")
+            if choice == "2":
+                print("Raw GitHub issue data:")
+                print(f"Issue from GitHub:\n{issue}")
+                print("\n-------------------------------")
+                print(f"Comments from GitHub:\n{comments}")
+            elif choice == "3":
+                print("Parsed GitHub issue data:")
+                print(f"Issue:\n{parsed_issue}")
+                print("\n-------------------------------")
+                print(f"Comments:\n{parsed_comments}")
+            elif choice == "4":
+                print("Getting response from LLM (may take a few seconds)...")
+                response = get_llm_answer(parsed_issue, parsed_comments)
+                print(f"LLM Response:\n{response}")
+            elif choice == "9":
+                print("Exiting...")
+                break
+            else:
+                input("Invalid choice. Press Enter to continue...")
+        except Exception as ex:
+            print(f"Error: {ex}")
+            input("Press Enter to continue...")
 
 
 if __name__ == "__main__":
