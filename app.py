@@ -25,17 +25,30 @@ def display_settings_section():
         if "prompt" not in st.session_state:
             st.session_state.prompt, st.session_state.model = get_default_settings()
 
-        st.session_state.prompt = st.text_area("Prompt", st.session_state.prompt, height=180)
+        st.session_state.prompt = st.text_area("Prompt", st.session_state.prompt, height=250)
         models = ["gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-4"]
-        st.session_state.model = st.selectbox("Select Model", models, index=models.index(st.session_state.model))
+        st.session_state.model = st.selectbox("Select model", models, index=models.index(st.session_state.model))
 
 
 def get_issue_to_show():
     """Get a GitHub issue to show from the user."""
     if "issue_url" not in st.session_state:
         st.session_state.issue_url = ""
-    st.subheader("Enter URL to GitHub Issue")
-    st.session_state.issue_url = st.text_input("Enter URL", value=st.session_state.issue_url)
+
+    example_urls = [
+        "https://github.com/openai/openai-python/issues/488 (simple example)",
+        "https://github.com/openai/openai-python/issues/650 (also simple, but more code blocks)",
+        "https://github.com/scikit-learn/scikit-learn/issues/26817 (large, requires GPT-3.5 16k oe GPT-4)",
+        "https://github.com/qjebbs/vscode-plantuml/issues/255 (large number of comments)",
+    ]
+    selected_url = st.selectbox("Choose an example URL from this list or type your own below", example_urls, index=None)
+    if selected_url:
+        # Discard the comment text after the URL to make it valid
+        st.session_state.issue_url = selected_url.split(" (")[0]
+
+    st.session_state.issue_url = st.text_input("Enter GitHub issue URL", value=st.session_state.issue_url,
+                                               label_visibility="collapsed",
+                                               placeholder="Enter URL to GitHub issue or pick an example from the list above")
 
 
 def get_github_data(issue_url: str) -> (dict, dict):
