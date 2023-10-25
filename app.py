@@ -58,12 +58,12 @@ def get_github_data(issue_url: str) -> (dict, dict):
     return issue, comments
 
 
-def get_llm_response(model: str, prompt: str, issue: dict, comments: dict) -> llm.LLMResponse:
+def get_llm_response(model: str, prompt: str, issue: str, comments: str) -> llm.LLMResponse:
     """Get the LLM response for the issue and comments."""
     with st.spinner(f"Waiting for {model} response..."):
         # Format the issue and comments into a text format to make it easier for the LLM to understand
         # and to save tokens.
-        text_format = f"{gh.parse_issue(issue)}\n\n{gh.parse_comments(comments)}"
+        text_format = f"{issue}\n\n{comments}"
 
         response = llm.chat_completion(model, prompt, text_format)
         return response
@@ -79,7 +79,11 @@ def main():
     if st.button(f"Generate summary with {st.session_state.model}"):
         try:
             issue, comments = get_github_data(st.session_state.issue_url)
-            response = get_llm_response(st.session_state.model, st.session_state.prompt, issue, comments)
+            parsed_issue = gh.parse_issue(issue)
+            parsed_comments = gh.parse_comments(comments)
+            response = get_llm_response(st.session_state.model, st.session_state.prompt,
+                                        parsed_issue, parsed_comments)
+
             st.subheader("GitHub Issue")
             st.json(issue, expanded=False)
             st.subheader("GitHub Comments")
