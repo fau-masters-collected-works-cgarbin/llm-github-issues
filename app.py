@@ -21,13 +21,13 @@ def get_default_settings():
 
 def display_settings_section():
     """Let the user change the settings that affect the LLM response."""
-    st.subheader("Settings")
-    if "prompt" not in st.session_state:
-        st.session_state.prompt, st.session_state.model = get_default_settings()
+    with st.expander("Click to configure the prompt and the model", expanded=False):
+        if "prompt" not in st.session_state:
+            st.session_state.prompt, st.session_state.model = get_default_settings()
 
-    st.session_state.prompt = st.text_area("Prompt", st.session_state.prompt)
-    models = ["gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-4"]
-    st.session_state.model = st.selectbox("Select Model", models, index=models.index(st.session_state.model))
+        st.session_state.prompt = st.text_area("Prompt", st.session_state.prompt, height=180)
+        models = ["gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-4"]
+        st.session_state.model = st.selectbox("Select Model", models, index=models.index(st.session_state.model))
 
 
 def get_issue_to_show():
@@ -63,7 +63,7 @@ def main():
 
     display_settings_section()
     get_issue_to_show()
-    if st.button("Fetch"):
+    if st.button(f"Generate summary with {st.session_state.model}"):
         try:
             issue, comments = get_github_data(st.session_state.issue_url)
             response = get_llm_response(st.session_state.model, st.session_state.prompt, issue, comments)
@@ -71,7 +71,7 @@ def main():
             st.json(issue, expanded=False)
             st.subheader("GitHub Comments")
             st.json(comments, expanded=False)
-            st.subheader("LLM Response")
+            st.subheader(f"Summary from {st.session_state.model}")
             st.write(response.llm_response)
         except Exception as err:
             st.error(err)
