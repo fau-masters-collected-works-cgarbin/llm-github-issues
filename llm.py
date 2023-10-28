@@ -58,8 +58,8 @@ def _openai_cost(input_tokens: int, output_tokens: int, model: str) -> float:
 
     # Note that we use the model name without checking
     # This is intentional to clearly flag when we need to update the code
-    input_cost = input_tokens * token_costs[model]["input"]
-    output_cost = output_tokens * token_costs[model]["completion"]
+    input_cost = input_tokens * token_costs[model]["input"] / 1_000
+    output_cost = output_tokens * token_costs[model]["completion"] / 1_000
     return input_cost + output_cost
 
 
@@ -83,7 +83,6 @@ def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResp
     response.user_input = user_input
     response.llm_response = completion.choices[0].message.content
     response.raw_response = completion
-    print(completion)
 
     # Record the number of tokens used for input and output
     response.input_tokens = completion.usage.prompt_tokens
