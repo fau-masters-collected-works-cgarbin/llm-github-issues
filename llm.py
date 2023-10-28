@@ -82,7 +82,11 @@ def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResp
     response.prompt = prompt
     response.user_input = user_input
     response.llm_response = completion.choices[0].message.content
-    response.raw_response = completion
+
+    # This is not exactly the raw response, but it's close enough
+    # It assumes the completion object is a pydantic.BaseModel class, which has the `dict()`
+    # method we need here
+    response.raw_response = completion.dict()
 
     # Record the number of tokens used for input and output
     response.input_tokens = completion.usage.prompt_tokens
