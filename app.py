@@ -5,6 +5,7 @@ Set up the environment as described in the README.md file, then run this app wit
     streamlit run app.py
 """
 import configparser
+import re
 import streamlit as st
 import github as gh
 import llm
@@ -91,8 +92,8 @@ def show_github_post_processed_data(issue: str, comments: str):
         st.text(comments)
 
 
-def show_llm_response(response: llm.LLMResponse):
-    """Show the LLM response."""
+def show_llm_raw_data(response: llm.LLMResponse):
+    """Show the raw data to/from the LLM."""
     with st.expander("Click to show/hide the raw data we sent to and received from the LLM", expanded=False):
         st.subheader("Prompt")
         st.text(response.prompt)
@@ -100,8 +101,16 @@ def show_llm_response(response: llm.LLMResponse):
         st.text(response.user_input)
         st.subheader("LLM Response")
         st.text(response.llm_response)
-    st.subheader(f"Summary from {st.session_state.model}")
-    st.write(response.llm_response)
+
+
+def show_llm_response(response: llm.LLMResponse):
+    """Show the formatted LLM response."""
+    # Change markdown heading 1 to heading 3 to make it smaller
+    # Ensure it's a heading by replacing only if it's at the start of the line
+    txt = re.sub(r"^# ", r"### ", response.llm_response, flags=re.MULTILINE)
+
+    st.header(f"Summary from {st.session_state.model}")
+    st.write(txt)
 
 
 def main():
@@ -119,8 +128,15 @@ def main():
             response = get_llm_response(st.session_state.model, st.session_state.prompt,
                                         parsed_issue, parsed_comments)
 
-            show_github_raw_data(issue, comments)
-            show_github_post_processed_data(parsed_issue, parsed_comments)
+            tabs = st.tabs(["Raw GitHub data", "Parsed GitHub data", "LLM data"])
+            with tabs[0]:
+                show_github_raw_data(issue, comments)
+            with tabs[1]:
+                show_github_post_processed_data(parsed_issue, parsed_comments)
+            with tabs[2]:
+                show_llm_raw_data(response)
+
+            st.divider()
             show_llm_response(response)
         except Exception as err:
             st.error(err)
