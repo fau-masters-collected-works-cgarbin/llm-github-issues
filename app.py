@@ -38,10 +38,11 @@ def get_issue_to_show():
     example_urls = [
         "https://github.com/openai/openai-python/issues/488 (simple example)",
         "https://github.com/openai/openai-python/issues/650 (also simple, but more code blocks)",
-        "https://github.com/scikit-learn/scikit-learn/issues/26817 (large, requires GPT-3.5 16k oe GPT-4)",
+        "https://github.com/scikit-learn/scikit-learn/issues/26817 (large, requires GPT-3.5 16k or GPT-4)",
         "https://github.com/qjebbs/vscode-plantuml/issues/255 (large number of comments)",
     ]
-    selected_url = st.selectbox("Choose an example URL from this list or type your own below", example_urls, index=None)
+    selected_url = st.selectbox("Choose an example URL from this list or type your own below",
+                                example_urls, placeholder="Pick from this list or enter an URL below", index=None)
     if selected_url:
         # Discard the comment text after the URL to make it valid
         st.session_state.issue_url = selected_url.split(" (")[0]
@@ -69,6 +70,26 @@ def get_llm_response(model: str, prompt: str, issue: str, comments: str) -> llm.
         return response
 
 
+def show_github_raw_data(issue: dict, comments: dict):
+    """Show the GitHub issue and comments as we got from the API."""
+    with st.expander("Click to see raw data from the GitHub API", expanded=False):
+        st.write("This is the data as we got from from the GitHub API.")
+        st.subheader("GitHub Issue")
+        st.json(issue, expanded=False)
+        st.subheader("GitHub Comments")
+        st.json(comments, expanded=False)
+
+
+def show_github_post_processed_data(issue: str, comments: str):
+    """Show the GitHub issue and comments after we have post-processed them."""
+    with st.expander("Click to see the post-processed GitHub data", expanded=False):
+        st.write("This is the data after we have post-processed to use with the LLM.")
+        st.subheader("GitHub Issue")
+        st.write(issue)
+        st.subheader("GitHub Comments")
+        st.write(comments)
+
+
 def main():
     """Run the Streamlit app."""
     st.set_page_config(layout="wide")
@@ -84,10 +105,8 @@ def main():
             response = get_llm_response(st.session_state.model, st.session_state.prompt,
                                         parsed_issue, parsed_comments)
 
-            st.subheader("GitHub Issue")
-            st.json(issue, expanded=False)
-            st.subheader("GitHub Comments")
-            st.json(comments, expanded=False)
+            show_github_raw_data(issue, comments)
+            show_github_post_processed_data(parsed_issue, parsed_comments)
             st.subheader(f"Summary from {st.session_state.model}")
             st.write(response.llm_response)
         except Exception as err:

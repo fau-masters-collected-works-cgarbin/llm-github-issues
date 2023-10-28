@@ -16,7 +16,7 @@ class LLMResponse:
 
     We use our class instead of returning the native LLM response to make it easier to adapt to different LLMs later.
     """
-    system_prompt: Optional[str] = None
+    prompt: Optional[str] = None
     user_input: Optional[str] = None
     llm_response: Optional[str] = None
     input_tokens: Optional[int] = None
@@ -35,7 +35,7 @@ def _get_openai_client() -> None:
     return OpenAI(api_key=api_key)
 
 
-def _openai_chat_completion(model: str, system_prompt: str, user_input: str) -> LLMResponse:
+def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResponse:
     """Get a completion from OpenAI."""
     # Always instantiate a new client to pick up configuration changes without restarting the program
     client = _get_openai_client()
@@ -43,13 +43,13 @@ def _openai_chat_completion(model: str, system_prompt: str, user_input: str) -> 
     completion = client.chat.completions.create(
         model=model,
         messages=[
-            {"role": "system", "content": system_prompt},
+            {"role": "system", "content": prompt},
             {"role": "user", "content": user_input},
         ],
         temperature=0.0  # We want precise and repeatable results
     )
     response = LLMResponse()
-    response.system_prompt = system_prompt
+    response.prompt = prompt
     response.user_input = user_input
     response.llm_response = completion.choices[0].message.content
     response.raw_response = completion
