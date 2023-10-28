@@ -54,9 +54,10 @@ def get_issue_to_show():
 
 def get_github_data(issue_url: str) -> (dict, dict):
     """Get the issue and comments from GitHub."""
-    issue = gh.get_issue(issue_url)
-    comments = gh.get_issue_comments(issue)
-    return issue, comments
+    with st.spinner("Waiting for GitHub response..."):
+        issue = gh.get_issue(issue_url)
+        comments = gh.get_issue_comments(issue)
+        return issue, comments
 
 
 def get_llm_response(model: str, prompt: str, issue: str, comments: str) -> llm.LLMResponse:
