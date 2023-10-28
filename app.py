@@ -136,6 +136,11 @@ def main():
             with tabs[2]:
                 show_llm_raw_data(response)
 
+            # Show a link to the issue in GitHub
+            # Prefer the issue URL from GitHub - fall back to the user's input if we don't have it
+            issue_url = issue.get("html_url", st.session_state.issue_url)
+            st.link_button("Open the issue in GitHub", issue_url)
+
             st.divider()
             show_llm_response(response)
         except Exception as err:
