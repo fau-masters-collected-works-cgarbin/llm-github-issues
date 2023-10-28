@@ -75,6 +75,11 @@ def get_llm_response(model: str, prompt: str, issue: str, comments: str) -> llm.
 def show_github_raw_data(issue: dict, comments: dict):
     """Show the GitHub issue and comments as we got from the API."""
     with st.expander("Click to show/hide raw data from the GitHub API", expanded=False):
+        # Show a link to the issue in GitHub
+        # Prefer the issue URL from GitHub - fall back to the user's input if we don't have it
+        issue_url = issue.get("html_url", st.session_state.issue_url)
+        st.link_button("Open the issue in GitHub", issue_url)
+
         st.write("This is the data as we got from from the GitHub API.")
         st.subheader("GitHub Issue")
         st.json(issue, expanded=False)
@@ -94,13 +99,19 @@ def show_github_post_processed_data(issue: str, comments: str):
 
 def show_llm_raw_data(response: llm.LLMResponse):
     """Show the raw data to/from the LLM."""
+    r = response  # Shorter name to make the code easier to read
+    st.write(f"Total tokens: {r.total_tokens:,} (input: {r.input_tokens:,}, output: {r.output_tokens:,})")
+    st.write(f"Cost: U${r.cost:.4f}")
+
     with st.expander("Click to show/hide the raw data we sent to and received from the LLM", expanded=False):
+        st.subheader("Raw LLM response")
+        st.json(r.raw_response, expanded=False)
         st.subheader("Prompt")
-        st.text(response.prompt)
+        st.text(r.prompt)
         st.subheader("Data we extracted from the GitHub issue and comments")
-        st.text(response.user_input)
+        st.text(r.user_input)
         st.subheader("LLM Response")
-        st.text(response.llm_response)
+        st.text(r.llm_response)
 
 
 def show_llm_response(response: llm.LLMResponse):
@@ -128,20 +139,14 @@ def main():
             response = get_llm_response(st.session_state.model, st.session_state.prompt,
                                         parsed_issue, parsed_comments)
 
-            tabs = st.tabs(["Raw GitHub data", "Parsed GitHub data", "LLM data"])
+            tabs = st.tabs(["LLM data", "Raw GitHub data", "Parsed GitHub data"])
             with tabs[0]:
-                show_github_raw_data(issue, comments)
-            with tabs[1]:
-                show_github_post_processed_data(parsed_issue, parsed_comments)
-            with tabs[2]:
                 show_llm_raw_data(response)
+            with tabs[1]:
+                show_github_raw_data(issue, comments)
+            with tabs[2]:
+                show_github_post_processed_data(parsed_issue, parsed_comments)
 
-            # Show a link to the issue in GitHub
-            # Prefer the issue URL from GitHub - fall back to the user's input if we don't have it
-            issue_url = issue.get("html_url", st.session_state.issue_url)
-            st.link_button("Open the issue in GitHub", issue_url)
-
-            st.divider()
             show_llm_response(response)
         except Exception as err:
             st.error(err)
