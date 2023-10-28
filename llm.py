@@ -16,6 +16,7 @@ class LLMResponse:
 
     We use our class instead of returning the native LLM response to make it easier to adapt to different LLMs later.
     """
+    model: Optional[str] = None
     prompt: Optional[str] = None
     user_input: Optional[str] = None
     llm_response: Optional[str] = None
@@ -49,6 +50,7 @@ def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResp
         temperature=0.0  # We want precise and repeatable results
     )
     response = LLMResponse()
+    response.model = model
     response.prompt = prompt
     response.user_input = user_input
     response.llm_response = completion.choices[0].message.content
