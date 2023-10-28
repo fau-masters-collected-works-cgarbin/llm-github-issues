@@ -73,7 +73,7 @@ def get_llm_response(model: str, prompt: str, issue: str, comments: str) -> llm.
 
 def show_github_raw_data(issue: dict, comments: dict):
     """Show the GitHub issue and comments as we got from the API."""
-    with st.expander("Click to see raw data from the GitHub API", expanded=False):
+    with st.expander("Click to show/hide raw data from the GitHub API", expanded=False):
         st.write("This is the data as we got from from the GitHub API.")
         st.subheader("GitHub Issue")
         st.json(issue, expanded=False)
@@ -83,12 +83,25 @@ def show_github_raw_data(issue: dict, comments: dict):
 
 def show_github_post_processed_data(issue: str, comments: str):
     """Show the GitHub issue and comments after we have post-processed them."""
-    with st.expander("Click to see the post-processed GitHub data", expanded=False):
+    with st.expander("Click to show/hide the post-processed GitHub data", expanded=False):
         st.write("This is the data after we have post-processed to use with the LLM.")
         st.subheader("GitHub Issue")
-        st.write(issue)
+        st.text(issue)
         st.subheader("GitHub Comments")
-        st.write(comments)
+        st.text(comments)
+
+
+def show_llm_response(response: llm.LLMResponse):
+    """Show the LLM response."""
+    with st.expander("Click to show/hide the raw data we sent to and received from the LLM", expanded=False):
+        st.subheader("Prompt")
+        st.text(response.prompt)
+        st.subheader("Data we extracted from the GitHub issue and comments")
+        st.text(response.user_input)
+        st.subheader("LLM Response")
+        st.text(response.llm_response)
+    st.subheader(f"Summary from {st.session_state.model}")
+    st.write(response.llm_response)
 
 
 def main():
@@ -108,8 +121,7 @@ def main():
 
             show_github_raw_data(issue, comments)
             show_github_post_processed_data(parsed_issue, parsed_comments)
-            st.subheader(f"Summary from {st.session_state.model}")
-            st.write(response.llm_response)
+            show_llm_response(response)
         except Exception as err:
             st.error(err)
 
