@@ -5,6 +5,7 @@ with a different LLM later if needed.
 """
 from dataclasses import dataclass
 import os
+import time
 from typing import Optional
 import dotenv
 from openai import OpenAI
@@ -24,6 +25,7 @@ class LLMResponse:
     output_tokens: Optional[int] = None
     cost: Optional[float] = None
     raw_response: Optional[dict] = None
+    elapsed_time: Optional[float] = None
 
     @property
     def total_tokens(self):
@@ -68,6 +70,7 @@ def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResp
     # Always instantiate a new client to pick up configuration changes without restarting the program
     client = _get_openai_client()
 
+    start_time = time.time()
     completion = client.chat.completions.create(
         model=model,
         messages=[
@@ -76,8 +79,11 @@ def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResp
         ],
         temperature=0.0  # We want precise and repeatable results
     )
+    elapsed_time = time.time() - start_time
+
     # Record the request and the response
     response = LLMResponse()
+    response.elapsed_time = elapsed_time
     response.model = model
     response.prompt = prompt
     response.user_input = user_input
