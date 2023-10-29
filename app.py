@@ -50,7 +50,8 @@ def get_issue_to_show():
 
     st.session_state.issue_url = st.text_input("Enter GitHub issue URL", value=st.session_state.issue_url,
                                                label_visibility="collapsed",
-                                               placeholder="Enter URL to GitHub issue or pick an example from the list above")
+                                               placeholder=("Enter URL to GitHub issue or pick an example"
+                                                            " from the list above"))
 
 
 def get_github_data(issue_url: str) -> (dict, dict):

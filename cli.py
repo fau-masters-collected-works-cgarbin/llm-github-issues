@@ -61,7 +61,7 @@ def show_llm_response(response):
     """Show the LLM response and other data."""
     r = response  # Shorter name for convenience
     print(f"LLM Response:\n{r.llm_response}")
-    print ("-------------------------------")
+    print("-------------------------------")
     print(f"Model: {r.model}")
     print(f"Input tokens: {r.input_tokens}, output tokens: {r.output_tokens} - cost: US ${r.cost:.2f}")
     tokens_sec = (r.input_tokens + r.output_tokens) / r.elapsed_time
