@@ -54,7 +54,18 @@ def get_llm_answer(parsed_issue, parsed_comments):
     model, prompt = get_model_and_prompt()
     user_input = f"{parsed_issue}\n{parsed_comments}"
     response = llm.chat_completion(model, prompt, user_input)
-    return response.llm_response
+    return response
+
+
+def show_llm_response(response):
+    """Show the LLM response and other data."""
+    r = response  # Shorter name for convenience
+    print(f"LLM Response:\n{r.llm_response}")
+    print ("-------------------------------")
+    print(f"Model: {r.model}")
+    print(f"Input tokens: {r.input_tokens}, output tokens: {r.output_tokens} - cost: US ${r.cost:.2f}")
+    tokens_sec = (r.input_tokens + r.output_tokens) / r.elapsed_time
+    print(f"Elapsed time: {r.elapsed_time:.2f} seconds ({tokens_sec:.1f} tokens/sec)")
 
 
 def get_model_and_prompt():
@@ -109,7 +120,7 @@ def main():
             elif choice == "4":
                 print("Getting response from LLM (may take a few seconds)...")
                 response = get_llm_answer(parsed_issue, parsed_comments)
-                print(f"LLM Response:\n{response}")
+                show_llm_response(response)
             elif choice == "9":
                 print("Exiting...")
                 break

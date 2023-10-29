@@ -100,8 +100,11 @@ def show_github_post_processed_data(issue: str, comments: str):
 def show_llm_raw_data(response: llm.LLMResponse):
     """Show the raw data to/from the LLM."""
     r = response  # Shorter name to make the code easier to read
-    st.write(f"Total tokens: {r.total_tokens:,} (input: {r.input_tokens:,}, output: {r.output_tokens:,})")
-    st.write(f"Cost: U${r.cost:.4f}")
+    st.write((f"Total tokens: {r.total_tokens:,} (input: {r.input_tokens:,}, output: {r.output_tokens:,})"
+             f"  - costs US ${r.cost:.4f}"))
+
+    tokens_sec = r.total_tokens / r.elapsed_time
+    st.write(f"Elapsed time: {r.elapsed_time:.2f} seconds ({tokens_sec:,.1f} tokens/sec)")
 
     with st.expander("Click to show/hide the raw data we sent to and received from the LLM", expanded=False):
         st.subheader("Raw LLM response")
