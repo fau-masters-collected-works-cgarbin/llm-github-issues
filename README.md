@@ -45,6 +45,16 @@ We will now review each step in more detail.
 
 We will now work through a few examples of summarizing GitHub issues to see how the LLMs behave.
 
+We will go from this (click to enlarge)...
+
+<!-- markdownlint-disable-next-line MD033 -->
+<img src="pics/github-issue-original.jpg" alt="Issue from GitHub" height="200"/>
+
+...to this  (click to enlarge):
+
+<!-- markdownlint-disable-next-line MD033 -->
+<img src="pics/github-issue-summarized.jpg" alt="Summary from LLM" height="200"/>
+
 If you haven't done so yet, [prepare the environment](#preparing-the-environment).
 
 Run the following commands to activate the environment and start the application in a browser.
