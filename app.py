@@ -40,6 +40,7 @@ def get_issue_to_show():
         "https://github.com/openai/openai-python/issues/488 (simple example)",
         "https://github.com/openai/openai-python/issues/650 (also simple, but more code blocks)",
         "https://github.com/scikit-learn/scikit-learn/issues/26817 (large, requires GPT-3.5 16k or GPT-4)",
+        "https://github.com/microsoft/semantic-kernel/issues/2039 (large comments, GPT-4 summarizes it better)",
         "https://github.com/qjebbs/vscode-plantuml/issues/255 (large number of comments)",
     ]
     selected_url = st.selectbox("Choose an example URL from this list or type your own below",
@@ -75,17 +76,16 @@ def get_llm_response(model: str, prompt: str, issue: str, comments: str) -> llm.
 
 def show_github_raw_data(issue: dict, comments: dict):
     """Show the GitHub issue and comments as we got from the API."""
-    with st.expander("Click to show/hide raw data from the GitHub API", expanded=False):
-        # Show a link to the issue in GitHub
-        # Prefer the issue URL from GitHub - fall back to the user's input if we don't have it
-        issue_url = issue.get("html_url", st.session_state.issue_url)
-        st.link_button("Open the issue in GitHub", issue_url)
+    # Show a link to the issue in GitHub
+    # Prefer the issue URL from GitHub - fall back to the user's input if we don't have it
+    issue_url = issue.get("html_url", st.session_state.issue_url)
+    st.link_button("Open the issue in GitHub", issue_url)
 
-        st.write("This is the data as we got from from the GitHub API.")
-        st.subheader("GitHub Issue")
-        st.json(issue, expanded=False)
-        st.subheader("GitHub Comments")
-        st.json(comments, expanded=False)
+    st.write("This is the data as we got from from the GitHub API.")
+    st.subheader("GitHub Issue")
+    st.json(issue, expanded=False)
+    st.subheader("GitHub Comments")
+    st.json(comments, expanded=False)
 
 
 def show_github_post_processed_data(issue: str, comments: str):
