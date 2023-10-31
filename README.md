@@ -1,9 +1,13 @@
 # Using LLMs to summarize GitHub issues
 
-This project is a learning exercise on using large language models (LLMs) for summarization. It uses GitHub issues as a practical use case that we can relate to. The goal is to allow developers to understand what is being reported and discussed in the issues without having to read each message in the thread.
+This project is a learning exercise on using large language models (LLMs) for summarization. It uses GitHub issues as a practical use case that we can relate to.
+
+The goal is to allow developers to understand what is being reported and discussed in the issues without having to read each message in the thread. We will take the [original GitHub issue with its comments](./docs/github-issue-original.jpg) and generate a summary like [this one](./docs/github-issue-summarized.jpg).
 
 We will review the following topics:
 
+1. How to prepare data to use with an LLM.
+1. How to build a prompt to summarize data.
 1. How good are LLMs at summarizing text and GitHub issues in particular.
 1. Some of their limitations, such as the context window size.
 1. Security concerns.
