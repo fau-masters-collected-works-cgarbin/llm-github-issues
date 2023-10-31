@@ -9,7 +9,7 @@ We will review the following topics:
 1. Security concerns.
 1. Their performance (how long it takes to generate a summary) and costs.
 
-## What happens behind the scenes
+## Overview of the steps
 
 Before we start, let's review what happens behind the scenes when we use LLMs to summarize GitHub issues.
 
@@ -41,21 +41,19 @@ sequenceDiagram
 
 We will now review each step in more detail.
 
-## Summarizing GitHub issues
+## Quick get-started guide
 
-We will now work through a few examples of summarizing GitHub issues to see how the LLMs behave.
-
-We will go from this (click to enlarge)...
+This section describes the steps to go from a GitHub issue like [this one](https://github.com/microsoft/semantic-kernel/issues/2039) (click to enlarge)...
 
 <!-- markdownlint-disable-next-line MD033 -->
 <img src="pics/github-issue-original.jpg" alt="Issue from GitHub" height="200"/>
 
-...to this  (click to enlarge):
+...to LLM-generated summary (click to enlarge):
 
 <!-- markdownlint-disable-next-line MD033 -->
 <img src="pics/github-issue-summarized.jpg" alt="Summary from LLM" height="200"/>
 
-If you haven't done so yet, [prepare the environment](#preparing-the-environment).
+First, [prepare the environment](#preparing-the-environment), if you haven't done so yet.
 
 Run the following commands to activate the environment and start the application in a browser.
 
@@ -63,6 +61,111 @@ Run the following commands to activate the environment and start the application
 source venv/bin/activate
 streamlit run app.py
 ```
+
+Once the application is running, enter the URL for the issue above, `https://github.com/microsoft/semantic-kernel/issues/2039`, and press the `Generate summary with <model>` button to generate the summary. It will take a few seconds to complete.
+
+**NOTES**:
+
+- Large language models are not deterministic and may be updated at any time. The results you get may be different from the ones shown here.
+- The GitHub issue may have been updated since the screenshots were taken.
+
+In the next sections will we go behind the scenes to see how the application works.
+
+## What happens behind the scenes
+
+This section describes the steps to go from a GitHub issue to a summary.
+
+### Step 1 - Get the GitHub issue and its comments
+
+The first step is to get the raw data using the GitHub API. In this step we translate the URL the user entered into a GitHub API URL and request the issue and its comments. For example, the URL `https://github.com/microsoft/semantic-kernel/issues/2039` is translated into `https://api.github.com/repos/microsoft/semantic-kernel/issues/2039`. The GitHub API returns a JSON object with the issue. [Click here](https://api.github.com/repos/microsoft/semantic-kernel/issues/2039) to see the JSON object.
+
+The issue has a link its comments:
+
+```text
+"comments_url": "https://api.github.com/repos/microsoft/semantic-kernel/issues/2039/comments",
+```
+
+We use that URL to request the comments and get another JSON object. [Click here](https://api.github.com/repos/microsoft/semantic-kernel/issues/2039/comments) to see the JSON object.
+
+### Step 2 - Translate the JSON data into a compact text format
+
+The JSON objects have more information than we need. Before sending the request to the LLM we need to extract the pieces we need for the following reasons:
+
+1. Large objects cost more because [most LLMs charge per token](https://openai.com/pricing).
+1. It takes longer to process large object.
+1. Large objects may not fit in the LLM's context window (the context window is the number of tokens the LLM can process at a time).
+
+In this step we take the JSON objects and convert them into a compact text format. The text format is easier to process and takes less space than the JSON objects.
+
+This the start of the JSON object for the issue:
+
+```text
+{
+  "url": "https://api.github.com/repos/microsoft/semantic-kernel/issues/2039",
+  "repository_url": "https://api.github.com/repos/microsoft/semantic-kernel",
+  "labels_url": "https://api.github.com/repos/microsoft/semantic-kernel/issues/2039/labels{/name}",
+  "comments_url": "https://api.github.com/repos/microsoft/semantic-kernel/issues/2039/comments",
+  "events_url": "https://api.github.com/repos/microsoft/semantic-kernel/issues/2039/events",
+  "html_url": "https://github.com/microsoft/semantic-kernel/issues/2039",
+  "id": 1808939848,
+  "node_id": "I_kwDOJDJ_Yc5r0jtI",
+  "number": 2039,
+  "title": "Copilot Chat: [Copilot Chat App] Azure Cognitive Search: kernel.Memory.SearchAsync producing no   ...
+
+  "body": "**Describe the bug**\r\nI'm trying to build out the Copilot Chat App as a RAG chat (without
+           skills for now). Not sure if its an issue with Semantic Kernel or my cognitive search...
+           ...many lines removed for brevity...
+           package version 0.1.0, pip package version 0.1.0, main branch of repository]\r\n\r\n**Additional
+           context**\r\n",
+```
+
+And this is the text format:
+
+```text
+Title: Copilot Chat: [Copilot Chat App] Azure Cognitive Search: kernel.Memory.SearchAsync producing no
+results for queries
+Body (between '''):
+'''
+**Describe the bug**
+I'm trying to build out the Copilot Chat App as a RAG chat (without skills for now). Not sure if its an
+issue with Semantic Kernel or my cognitive search setup. Looking for some guidance.
+...many lines removed for brevity...
+```
+
+### Step 3 - Build the prompt
+
+A [prompt](https://developers.google.com/machine-learning/resources/prompt-eng) tells the LLM what to do, along with the data it needs to do it.
+
+In our case, we want the LLM to summarize the GitHub issue and the comments. Therefore, we need three pieces in our prompt:
+
+1. Clear instructions on what to do.
+1. The GitHub issue needed to generate the summary.
+1. The issues comments needed to generate the summary.
+
+The prompt we use is stored in [this file](./llm.ini). The prompt has instructions to the LLM summarize the issue and the comments (the _"Don't waste..."_ part comes from [this example](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/plugins/)).
+
+```text
+You are an experienced developer familiar with GitHub issues.
+    The following text was parsed from a GitHub issue and its comments.
+    Extract the following information from the issue and comments:
+    - Issue: A list with the following items: title, the submitter name, the submission date and
+      time, labels, and status (whether the issue is still open or closed).
+    - Summary: A summary of the issue in precisely one short sentence of no more than 50 words.
+    - Details: A longer summary of the issue. If code has been provided, list the pieces of code
+      that cause the issue in the summary.
+    - Comments: A table with a summary of each comment in chronological order with the columns:
+      date/time, time since the issue was submitted, author, and a summary of the comment.
+    Don't waste words. Use short, clear, complete sentences. Use active voice. Maximize detail, meaning focus on the content. Quote code snippets if they are relevant.
+    Answer in markdown with section headers separating each of the parts above.
+    The issue text and comments start here:
+```
+
+See [this site](https://www.promptingguide.ai/) for more information on how to write prompts.
+
+### Step 4 - Send the request to the LLM
+
+### Step 5 - Show the response
+
 
 ## Design
 
