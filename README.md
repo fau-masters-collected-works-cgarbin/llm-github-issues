@@ -24,7 +24,7 @@ The following diagram shows the main steps:
 ```mermaid
 sequenceDiagram
     autonumber
-    participant U as User
+    Actor U as User
     participant App as Application
     participant GH as GitHub API
     participant LLM as LLM
@@ -46,12 +46,12 @@ We will now review each step in more detail.
 This section describes the steps to go from a GitHub issue like [this one](https://github.com/microsoft/semantic-kernel/issues/2039) (click to enlarge)...
 
 <!-- markdownlint-disable-next-line MD033 -->
-<img src="pics/github-issue-original.jpg" alt="Issue from GitHub" height="200"/>
+<img src="docs/github-issue-original.jpg" alt="Issue from GitHub" height="200"/>
 
 ...to LLM-generated summary (click to enlarge):
 
 <!-- markdownlint-disable-next-line MD033 -->
-<img src="pics/github-issue-summarized.jpg" alt="Summary from LLM" height="200"/>
+<img src="docs/github-issue-summarized.jpg" alt="Summary from LLM" height="200"/>
 
 First, [prepare the environment](#preparing-the-environment), if you haven't done so yet.
 
@@ -66,10 +66,10 @@ Once the application is running, enter the URL for the issue above, `https://git
 
 **NOTES**:
 
-- Large language models are not deterministic and may be updated at any time. The results you get may be different from the ones shown here.
+- Large language models are not deterministic and may be updated anytime. The results you get may be different from the ones shown here.
 - The GitHub issue may have been updated since the screenshots were taken.
 
-In the next sections will we go behind the scenes to see how the application works.
+In the next sections, we will go behind the scenes to see how the application works.
 
 ## What happens behind the scenes
 
@@ -77,7 +77,7 @@ This section describes the steps to go from a GitHub issue to a summary.
 
 ### Step 1 - Get the GitHub issue and its comments
 
-The first step is to get the raw data using the GitHub API. In this step we translate the URL the user entered into a GitHub API URL and request the issue and its comments. For example, the URL `https://github.com/microsoft/semantic-kernel/issues/2039` is translated into `https://api.github.com/repos/microsoft/semantic-kernel/issues/2039`. The GitHub API returns a JSON object with the issue. [Click here](https://api.github.com/repos/microsoft/semantic-kernel/issues/2039) to see the JSON object.
+The first step is to get the raw data using the GitHub API. In this step we translate the URL the user entered into a GitHub API URL and request the issue and its comments. For example, the URL `https://github.com/microsoft/semantic-kernel/issues/2039` is translated into `https://api.github.com/repos/microsoft/semantic-kernel/issues/2039`. The GitHub API returns a JSON object with the issue. [Click here](https://api.github.com/repos/microsoft/semantic-kernel/issues/2039) to see the JSON object for the issue.
 
 The issue has a link its comments:
 
@@ -85,19 +85,19 @@ The issue has a link its comments:
 "comments_url": "https://api.github.com/repos/microsoft/semantic-kernel/issues/2039/comments",
 ```
 
-We use that URL to request the comments and get another JSON object. [Click here](https://api.github.com/repos/microsoft/semantic-kernel/issues/2039/comments) to see the JSON object.
+We use that URL to request the comments and get another JSON object. [Click here](https://api.github.com/repos/microsoft/semantic-kernel/issues/2039/comments) to see the JSON object for the comments.
 
 ### Step 2 - Translate the JSON data into a compact text format
 
-The JSON objects have more information than we need. Before sending the request to the LLM we need to extract the pieces we need for the following reasons:
+The JSON objects have more information than we need. Before sending the request to the LLM, we need to extract the pieces we need for the following reasons:
 
 1. Large objects cost more because [most LLMs charge per token](https://openai.com/pricing).
-1. It takes longer to process large object.
+1. It takes longer to process large objects.
 1. Large objects may not fit in the LLM's context window (the context window is the number of tokens the LLM can process at a time).
 
-In this step we take the JSON objects and convert them into a compact text format. The text format is easier to process and takes less space than the JSON objects.
+In this step, we take the JSON objects and convert them into a compact text format. The text format is easier to process and takes less space than the JSON objects.
 
-This the start of the JSON object for the issue:
+This is the start of the JSON object returned by the GitHub API for the issue:
 
 ```text
 {
@@ -117,9 +117,10 @@ This the start of the JSON object for the issue:
            ...many lines removed for brevity...
            package version 0.1.0, pip package version 0.1.0, main branch of repository]\r\n\r\n**Additional
            context**\r\n",
+   ...
 ```
 
-And this is the text format:
+And this is the compact text format we create out of it:
 
 ```text
 Title: Copilot Chat: [Copilot Chat App] Azure Cognitive Search: kernel.Memory.SearchAsync producing no
@@ -132,9 +133,18 @@ issue with Semantic Kernel or my cognitive search setup. Looking for some guidan
 ...many lines removed for brevity...
 ```
 
+To get from the JSON object to the compact text format we do the following:
+
+- Remove all fields we don't need for the summary. For example, `repository_url`, `node_id`, and many others.
+- Change from JSON to plain text format. For example, `{"title": "Copilot Chat: [Copilot Chat App] Azure ...` becomes `Title: Copilot Chat: [Copilot Chat App] Azure ...`.
+- Remove spaces and quotes. They count as tokens, which increase costs and processing time.
+- Add a few hints to guide the LLM. For example, `Body (between ''')` tells the LLM that the body of the issue is between the `'''` characters.
+
+[Click here](./docs/post-processed-issue-comments.txt) to see the result of this step. Compare with the JSON object for the [issue](https://api.github.com/repos/microsoft/semantic-kernel/issues/2039) and [comments](https://api.github.com/repos/microsoft/semantic-kernel/issues/2039/comments) to see how much smaller the text format is.
+
 ### Step 3 - Build the prompt
 
-A [prompt](https://developers.google.com/machine-learning/resources/prompt-eng) tells the LLM what to do, along with the data it needs to do it.
+A [prompt](https://developers.google.com/machine-learning/resources/prompt-eng) tells the LLM what to do, along with the data it needs.
 
 In our case, we want the LLM to summarize the GitHub issue and the comments. Therefore, we need three pieces in our prompt:
 
@@ -142,7 +152,7 @@ In our case, we want the LLM to summarize the GitHub issue and the comments. The
 1. The GitHub issue needed to generate the summary.
 1. The issues comments needed to generate the summary.
 
-The prompt we use is stored in [this file](./llm.ini). The prompt has instructions to the LLM summarize the issue and the comments (the _"Don't waste..."_ part comes from [this example](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/plugins/)).
+Our prompt is stored in [this file](./llm.ini). The prompt has instructions to the LLM to summarize the issue and the comments in the format we want (the _"Don't waste..."_ part comes from [this example](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/plugins/)).
 
 ```text
 You are an experienced developer familiar with GitHub issues.

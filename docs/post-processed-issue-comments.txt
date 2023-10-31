@@ -1,0 +1,121 @@
+Title: Copilot Chat: [Copilot Chat App] Azure Cognitive Search: kernel.Memory.SearchAsync producing no results for queries
+Body (between '''):
+'''
+**Describe the bug**
+I'm trying to build out the Copilot Chat App as a RAG chat (without skills for now). Not sure if its an issue with Semantic Kernel or my cognitive search setup. Looking for some guidance.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Run the Copilot Chat App example
+2. Register Azure Cognitive Search as Kernels memory
+3. use the kernel.Memory.SearchAsync with the user prompt (not user intent) to find relevant information
+4. For some prompts, it does not return any data from the indices. Azure Cognitive search's search explorer on the hand, returns the correct data. (Semantic Search is enabled)
+
+**Expected behavior**
+kernel.Memory.SearchAsync will return the right set of documents from the created index for all queries.
+
+**Screenshots**
+If applicable, add screenshots to help explain your problem.
+
+**Platform**
+ - OS: [e.g. Windows, Mac]
+ - IDE: [e.g. Visual Studio, VS Code]
+ - Language: [e.g. C#, Python]
+ - Source: [e.g. NuGet package version 0.1.0, pip package version 0.1.0, main branch of repository]
+
+**Additional context**
+
+'''
+Submitted by: animeshj9
+Submitted on: 2023-07-18T02:18:07Z
+Submitter association: NONE
+State: closed
+Labels: good first issue, question, copilot chat
+
+
+Comment by: vman
+Comment on: 2023-07-19T15:40:33Z
+Body (between '''):
+'''
+We are seeing this issue as well in the latest version of the repo. It used to work at least until 12th July for us.
+'''
+Comment by: TaoChenOSU
+Comment on: 2023-07-20T17:59:01Z
+Body (between '''):
+'''
+Hello @animeshj9,
+
+Thanks for reporting the issue!
+
+`kernel.Memory` is a `SemanticTextMemory` (https://github.com/microsoft/semantic-kernel/blob/main/dotnet/src/SemanticKernel/Memory/SemanticTextMemory.cs) instance that uses the embedding generator backed by the embedding model you provide to generate embeddings to perform vector-based search. Semantic search in Azure Cognitive Search, on the other hand, uses a different process to retrieve semantically relevant results for your query (https://learn.microsoft.com/en-us/azure/search/semantic-search-overview). I think this explains the difference in the behaviors you see.
+
+If you can provide more information or samples, we will be able to assist you further.
+
+'''
+Comment by: animeshj9
+Comment on: 2023-07-21T17:46:59Z
+Body (between '''):
+'''
+Hey @TaoChenOSU  - Thanks for the information.
+
+We were able to root cause and have identified a couple of issues that were happening that caused our Copilot Chat to not get any data from CognitiveSearch memory.
+
+First, to preface - we are using the 0.16 release of SK
+
+(1) In the [DocumentMemorySkill](https://github.com/microsoft/semantic-kernel/blob/main/samples/apps/copilot-chat-app/webapi/CopilotChat/Skills/ChatSkills/DocumentMemorySkill.cs) on Copilot Chat - While it says to filters out memories based DocumentMemoryMinRelevance in the promptOptions, its really filtering it out on the ReRanker score that's coming from CognitiveSearch. That helped us set the right config for MemoryMinRelevance and we were able to see some responses.
+
+(2) The function (ToMemoryRecordMetadata)[https://github.com/microsoft/semantic-kernel/blob/53a3a8466fdcafbdad304c55c4e4591dfdff6582/dotnet/src/Connectors/Connectors.Memory.AzureCognitiveSearch/AzureCognitiveSearchMemoryRecord.cs#L103C1-L104C1] - errors out if it encounters certain symbols / combinations in the documentation and error out with "the base64 string is not valid".
+
+For v0.16, we are writing our own Search function instead of using `kernel.Memory.SearchAsync()` to get the documents and that seems to be working fine for us. We are also exploring if moving to the latest SK version will fix this issue as I see a lot of changes have been made to CognitiveSearch connecter since v0.16.
+'''
+Comment by: animeshj9
+Comment on: 2023-07-21T17:58:57Z
+Body (between '''):
+'''
+@vman  - What is the error you are getting? or is it just not returning data when you call `kernel.Memory.SearchAsync()`.
+Can you check if reducing the minrelevance or maybe writing your own Cognitive Search instead of using kernel.Memory work?
+
+If not, let us know your error and we can try to see if we can root cause it.
+
+
+'''
+Comment by: glahaye
+Comment on: 2023-07-25T21:12:59Z
+Body (between '''):
+'''
+As an alternative to using Azure Cognitive Search's semantic search, consider using Azure Cognitive Search's vector search feature, available from SK version 0.17.230718.1-preview on (and using the Microsoft.SemanticKernel.Connectors.Memory.AzureSearch nuget as opposed to only the Microsoft.SemanticKernel.Connectors.Memory.AzureCognitiveSearch nuget)
+'''
+Comment by: animeshj9
+Comment on: 2023-07-27T19:33:53Z
+Body (between '''):
+'''
+@glahaye  - I am unable to find Microsoft.SemanticKernel.Connectors.Memory.AzureSearch nuget.
+
+Only returns Azure Cognitive Search: https://www.nuget.org/packages?q=Microsoft.SemanticKernel.Connectors.Memory.AzureSearch
+'''
+Comment by: glahaye
+Comment on: 2023-07-29T22:28:36Z
+Body (between '''):
+'''
+Hi @animeshj9
+
+There's been a couple of changes and I think they might fix your problem.
+
+First, Copilot Chat has been renamed to Chat Copilot and moved to its own repo:
+https://github.com/microsoft/chat-copilot/
+
+Then, the Nuget package I mentioned to you has been retired and its functionality has now replaced the old code in Microsoft.SemanticKernel.Connectors.Memory.AzureCognitiveSearch.
+
+I have a PR open that modifies Chat Copilot to use that latest version of the Nuget and get the vector search experience:
+https://github.com/microsoft/chat-copilot/pull/65
+
+I estimate it will get merged on Monday and I am confident it will resolve your current problem.  Because of that, I will go ahead and close this issue on this repo.
+
+If you do still experience problems after the merge of the PR, feel free to open a new issue in the **new** repo.
+'''
+Comment by: animeshj9
+Comment on: 2023-07-31T18:59:35Z
+Body (between '''):
+'''
+Thank you very much @glahaye! I will check it out and let you know if it fixes my issues.
+'''
