@@ -150,13 +150,7 @@ To get from the JSON object to the compact text format we do the following:
 
 A [prompt](https://developers.google.com/machine-learning/resources/prompt-eng) tells the LLM what to do, along with the data it needs.
 
-In our case, we want the LLM to summarize the GitHub issue and the comments. Therefore, we need three pieces in our prompt:
-
-1. Clear instructions on what to do.
-1. The GitHub issue needed to generate the summary.
-1. The issues comments needed to generate the summary.
-
-Our prompt is stored in [this file](./llm.ini). The prompt has instructions to the LLM to summarize the issue and the comments in the format we want (the _"Don't waste..."_ part comes from [this example](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/plugins/)).
+Our prompt is stored in [this file](./llm.ini). The prompt instructs the LLM to summarize the issue and the comments in the format we want (the _"Don't waste..."_ part comes from [this example](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/plugins/)).
 
 ```text
 You are an experienced developer familiar with GitHub issues.
@@ -203,7 +197,7 @@ The LLM returns a JSON object with the response and usage data. We show the resp
 
 This is a sample response from the LLM (using the [OpenAI API](https://platform.openai.com/docs/guides/gpt/chat-completions-api)):
 
-```json
+```python
 ChatCompletion(..., choices=[Choice(finish_reason='stop', index=0, message=ChatCompletionMessage(content=
 '<response removed to save space>', role='assistant', function_call=None))], created=1698528558,
 model='gpt-3.5-turbo-0613', object='chat.completion', usage=CompletionUsage(completion_tokens=304,
