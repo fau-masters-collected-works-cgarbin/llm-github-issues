@@ -9,7 +9,7 @@ We will review the following topics:
 1. How to prepare data to use with an LLM.
 1. How to build a prompt to summarize data.
 1. How good are LLMs at summarizing text and GitHub issues in particular.
-1. Some of their limitations, such as the context window size.
+1. Developing applications with LLMs: some of their limitations, such as the context window size.
 1. Security concerns.
 1. Their performance (how long it takes to generate a summary) and costs.
 
@@ -171,14 +171,55 @@ You are an experienced developer familiar with GitHub issues.
       date/time, time since the issue was submitted, author, and a summary of the comment.
     Don't waste words. Use short, clear, complete sentences. Use active voice. Maximize detail, meaning focus on the content. Quote code snippets if they are relevant.
     Answer in markdown with section headers separating each of the parts above.
-    The issue text and comments start here:
 ```
-
-See [this site](https://www.promptingguide.ai/) for more information on how to write prompts.
 
 ### Step 4 - Send the request to the LLM
 
+We now have all the pieces we need to send the request to the LLM. Different LLMs have different APIs, but most of them have a variation of the following parameters:
+
+- The model: The LLM to use. As a general rule, larger models are better, but are also more expensive and take more time to build the response.
+- System prompt: The instructions we send to the LLM to tell it what to do, what format to use, and so on. This is usually not visible to the user.
+- The user input: The data the user enters in the application. In our case, the user enters the URL for the GitHub issue and we use it to create the actual user input (the parsed issue and comments).
+- The temperature: The higher the temperature, the more creative the LLM is. The lower the temperature, the more predictable it is. We use a temperature of 0.0 to get more preicse and consistent results.
+
+There are [other parameters](https://txt.cohere.com/llm-parameters-best-outputs-language-ai/) we can adjust. These are the main ones we use in this project.
+
+This is the relevant code in [llm.py](./llm.py):
+
+```python
+    completion = client.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": prompt},
+            {"role": "user", "content": user_input},
+        ],
+        temperature=0.0  # We want precise and repeatable results
+    )
+```
+
 ### Step 5 - Show the response
+
+The LLM returns a JSON object with the response and usage data. We show the response to the user and use the usage data to calculate the cost of the request.
+
+This is a sample response from the LLM (using the [OpenAI API](https://platform.openai.com/docs/guides/gpt/chat-completions-api)):
+
+```json
+ChatCompletion(..., choices=[Choice(finish_reason='stop', index=0, message=ChatCompletionMessage(content=
+'<response removed to save space>', role='assistant', function_call=None))], created=1698528558,
+model='gpt-3.5-turbo-0613', object='chat.completion', usage=CompletionUsage(completion_tokens=304,
+prompt_tokens=1301, total_tokens=1605))
+```
+
+Besides the response, we get the token usage. The cost is not part of the reponse. We have to calculate that ourselves following the [published pricing rules](https://openai.com/pricing).
+
+At this point we have everything we need to show the response to the user.
+
+## Developing applications with LLMs
+
+In this section we will go through a few examples to see how to use LLMs in applications. We will start with simple cases that work well, then move on to cases where things don't behave as expected and how to work around them.
+
+
+
 
 
 ## Design
