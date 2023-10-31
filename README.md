@@ -154,17 +154,17 @@ Our prompt is stored in [this file](./llm.ini). The prompt instructs the LLM to 
 
 ```text
 You are an experienced developer familiar with GitHub issues.
-    The following text was parsed from a GitHub issue and its comments.
-    Extract the following information from the issue and comments:
-    - Issue: A list with the following items: title, the submitter name, the submission date and
-      time, labels, and status (whether the issue is still open or closed).
-    - Summary: A summary of the issue in precisely one short sentence of no more than 50 words.
-    - Details: A longer summary of the issue. If code has been provided, list the pieces of code
-      that cause the issue in the summary.
-    - Comments: A table with a summary of each comment in chronological order with the columns:
-      date/time, time since the issue was submitted, author, and a summary of the comment.
-    Don't waste words. Use short, clear, complete sentences. Use active voice. Maximize detail, meaning focus on the content. Quote code snippets if they are relevant.
-    Answer in markdown with section headers separating each of the parts above.
+The following text was parsed from a GitHub issue and its comments.
+Extract the following information from the issue and comments:
+- Issue: A list with the following items: title, the submitter name, the submission date and
+  time, labels, and status (whether the issue is still open or closed).
+- Summary: A summary of the issue in precisely one short sentence of no more than 50 words.
+- Details: A longer summary of the issue. If code has been provided, list the pieces of code
+  that cause the issue in the summary.
+- Comments: A table with a summary of each comment in chronological order with the columns:
+  date/time, time since the issue was submitted, author, and a summary of the comment.
+Don't waste words. Use short, clear, complete sentences. Use active voice. Maximize detail, meaning focus on the content. Quote code snippets if they are relevant.
+Answer in markdown with section headers separating each of the parts above.
 ```
 
 ### Step 4 - Send the request to the LLM
@@ -176,7 +176,7 @@ We now have all the pieces we need to send the request to the LLM. Different LLM
 - The user input: The data the user enters in the application. In our case, the user enters the URL for the GitHub issue and we use it to create the actual user input (the parsed issue and comments).
 - The temperature: The higher the temperature, the more creative the LLM is. The lower the temperature, the more predictable it is. We use a temperature of 0.0 to get more preicse and consistent results.
 
-There are [other parameters](https://txt.cohere.com/llm-parameters-best-outputs-language-ai/) we can adjust. These are the main ones we use in this project.
+These are the main ones we use in this project. There are [other parameters](https://txt.cohere.com/llm-parameters-best-outputs-language-ai/) we can adjust for other use cases.
 
 This is the relevant code in [llm.py](./llm.py):
 
@@ -212,25 +212,7 @@ At this point we have everything we need to show the response to the user.
 
 In this section we will go through a few examples to see how to use LLMs in applications. We will start with simple cases that work well, then move on to cases where things don't behave as expected and how to work around them.
 
-
-
-
-
-## Design
-
-This section describes the project design. It is not necessary to read it to use the project.
-
-There are three main steps:
-
-1. [Fetching data](#fetching-data): Fetch the comments posted in the GitHub issue. This will return large JSON objects.
-1. [Preprocessing data](#preprocessing-data): Convert the JSON objects into a format that the LLM can use. The goal here is to reduce the amount of data to process and to remove irrelevant information. Concise data helps the LLM focus on important information and reduces costs using fewer tokens.
-1. [Extracting information with an LLM](#extracting-information-with-a-llm): Use the LLM to extract the information from the preprocessed data.
-
-### Fetching data
-
-### Preprocessing data
-
-### Extracting information with a LLM
+TBD...
 
 ## Modifying and testing the code
 
