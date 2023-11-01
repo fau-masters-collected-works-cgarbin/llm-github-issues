@@ -83,7 +83,7 @@ This section describes the steps to go from a GitHub issue to a summary.
 
 The first step is to get the raw data using the GitHub API. In this step we translate the URL the user entered into a GitHub API URL and request the issue and its comments. For example, the URL `https://github.com/microsoft/semantic-kernel/issues/2039` is translated into `https://api.github.com/repos/microsoft/semantic-kernel/issues/2039`. The GitHub API returns a JSON object with the issue. [Click here](https://api.github.com/repos/microsoft/semantic-kernel/issues/2039) to see the JSON object for the issue.
 
-The issue has a link its comments:
+The issue has a link to its comments:
 
 ```text
 "comments_url": "https://api.github.com/repos/microsoft/semantic-kernel/issues/2039/comments",
@@ -171,10 +171,10 @@ Answer in markdown with section headers separating each of the parts above.
 
 We now have all the pieces we need to send the request to the LLM. Different LLMs have different APIs, but most of them have a variation of the following parameters:
 
-- The model: The LLM to use. As a general rule, larger models are better, but are also more expensive and take more time to build the response.
+- The model: The LLM to use. As a general rule, larger models are better but are also more expensive and take more time to build the response.
 - System prompt: The instructions we send to the LLM to tell it what to do, what format to use, and so on. This is usually not visible to the user.
 - The user input: The data the user enters in the application. In our case, the user enters the URL for the GitHub issue and we use it to create the actual user input (the parsed issue and comments).
-- The temperature: The higher the temperature, the more creative the LLM is. The lower the temperature, the more predictable it is. We use a temperature of 0.0 to get more preicse and consistent results.
+- The temperature: The higher the temperature, the more creative the LLM is. The lower the temperature, the more predictable it is. We use a temperature of 0.0 to get more precise and consistent results.
 
 These are the main ones we use in this project. There are [other parameters](https://txt.cohere.com/llm-parameters-best-outputs-language-ai/) we can adjust for other use cases.
 
@@ -204,15 +204,87 @@ model='gpt-3.5-turbo-0613', object='chat.completion', usage=CompletionUsage(comp
 prompt_tokens=1301, total_tokens=1605))
 ```
 
-Besides the response, we get the token usage. The cost is not part of the reponse. We have to calculate that ourselves following the [published pricing rules](https://openai.com/pricing).
+Besides the response, we get the token usage. The cost is not part of the response. We must calculate that ourselves following the [published pricing rules](https://openai.com/pricing).
 
-At this point we have everything we need to show the response to the user.
+At this point, we have everything we need to show the response to the user.
 
 ## Developing applications with LLMs
 
 In this section we will go through a few examples to see how to use LLMs in applications. We will start with simple cases that work well, then move on to cases where things don't behave as expected and how to work around them.
 
-TBD...
+This is a summary of what is covered in the following sections.
+
+TODO: Add links to sections
+
+1. A simple case first to see how LLMs can summarize.
+1. A large issue that doesn't fit in the context window of a basic LLM.
+1. ...
+1. ...
+
+### A simple case first
+
+We will start with a simple case to see how well LLMs can summarize.
+
+Start the user interface with the following command.
+
+```bash
+source venv/bin/activate
+streamlit run app.py
+```
+
+Then choose the first issue in the list of samples, _`<https://github.com/openai/openai-python/issues/488> (simple example)`_ and press the _"Generate summary with..."_ button.
+
+<!-- markdownlint-disable-next-line MD033 -->
+<img src="docs/example1-choose-issue.jpg" alt="Choose the first issue" height="200"/>
+
+After a few seconds we should get a summary like this one. At the top we can see the token count, the cost (derived from the token count), and how long it took for the LLM to generate the summary.
+
+After that we see the LLM's response. Compared with the [original GitHub issue](https://github.com/openai/openai-python/issues/488), the LLM does a good job of summarizing the main points of the issue and the comments. We can see at a glance the main points of the issue and its comments.
+
+<!-- markdownlint-disable-next-line MD033 -->
+<img src="docs/example1-summary.png" alt="First issue summary" height="250"/>
+
+### A large issue
+
+Now choose the issue _`https://github.com/scikit-learn/scikit-learn/issues/26817 (large, requires GPT-3.5 16k or GPT-4)` and press the _"Generate summary with..."_ button. Do not change the LLM model yet.
+
+It will fail with this error:
+
+> `Error code: 400 - {'error': {'message': "This model's maximum context length is 4097 tokens. However, your messages resulted in 4154 tokens. Please reduce the length of the messages.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}`
+
+Each LLM has a limit on the number of tokens it can process at a time. This limit is the _context window_ size. The context window must fit the information we want to summarize and the summary itself. If the information we want to summarize is larger than the context window, as we saw in this case, the LLM will reject the request.
+
+There are a few ways to work around this problem:
+
+- Break up the information into smaller pieces that fit in the context window. For example, we could [ask for a summary of each comment separately](https://github.com/microsoft/azure-openai-design-patterns/blob/main/patterns/01-large-document-summarization/README.md), then combine them into a single summary to show to the user. This may not work well in all cases, for example, if one comment refers to another.
+- Use a model with a larger context window.
+
+We will use the second option. Click on _"Click to configure the prompt and the model"_ at the top of the change and select the _"gpt-3.5-turbo-16k"_ model. Then click the _"Generate summary with..."_ button again.
+
+<!-- markdownlint-disable-next-line MD033 -->
+<img src="docs/example2-choose-16k-model.jpg" alt="Using a larger context window" height="250"/>
+
+Now we get a summary from the LLM.
+
+Why don't we start with the gpt-3.5-turbo-16k model to avoid such problems? Money. As a general rule, LLMs with larger context windows cost more. If we use an AI provider such as OpenAI, we have to [pay more per token](https://openai.com/pricing). If we run the model ourselves, we need to buy more powerful hardware. Either way, using a larger context window costs more.
+
+### A more powerful model
+
+Although in the last section we managed to get a summary from the LLM, it's not a particularly good one. Note how the LLM copies pieces of text from the comments instead of summarizing them.
+
+>>> pic here.
+
+We can get better results by using a more powerful model. In this case, we will use the gpt-4 model. Click on _"Click to configure the prompt and the model"_ at the top of the change and select the _"gpt-4"_ model. Then click on the _"Generate summary with..."_ button again.
+
+The summaries we get this time are much better. The LLM summarizes the comments instead of copying them.
+
+>> pic here.
+
+Why don't we start with the gpt-4k model? Money. As a general rule, better models are also larger. They need more hardware to run, translating into [higher costs per token](https://openai.com/pricing).
+
+How do we pick a model? It depends on the use case. Start with the smallest (and thus cheaper) model that produces good results. Create some heuristics to decide when to use a more powerful model. For example, switch to a larger model if the comments are larger than a certain size.
+
+### << next section goes here >>
 
 ## Modifying and testing the code
 
