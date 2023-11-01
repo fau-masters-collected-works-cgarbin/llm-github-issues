@@ -216,12 +216,12 @@ This is a summary of what is covered in the following sections.
 
 TODO: Add links to sections
 
-1. A simple case first to see how LLMs can summarize.
-1. A large issue that doesn't fit in the context window of a basic LLM.
-1. ...
+1. A simple GitHub issue first to see how LLMs can summarize.
+1. A large GitHub issue that doesn't fit in the context window of a basic LLM.
+1. A more powerful model for a better summary.
 1. ...
 
-### A simple case first
+### A simple GitHub issue to get started
 
 We will start with a simple case to see how well LLMs can summarize.
 
@@ -244,7 +244,7 @@ After that we see the LLM's response. Compared with the [original GitHub issue](
 <!-- markdownlint-disable-next-line MD033 -->
 <img src="docs/example1-summary.png" alt="First issue summary" height="250"/>
 
-### A large issue
+### A large GitHub issue
 
 Now choose the issue _`https://github.com/scikit-learn/scikit-learn/issues/26817 (large, requires GPT-3.5 16k or GPT-4)` and press the _"Generate summary with..."_ button. Do not change the LLM model yet.
 
@@ -259,7 +259,7 @@ There are a few ways to work around this problem:
 - Break up the information into smaller pieces that fit in the context window. For example, we could [ask for a summary of each comment separately](https://github.com/microsoft/azure-openai-design-patterns/blob/main/patterns/01-large-document-summarization/README.md), then combine them into a single summary to show to the user. This may not work well in all cases, for example, if one comment refers to another.
 - Use a model with a larger context window.
 
-We will use the second option. Click on _"Click to configure the prompt and the model"_ at the top of the change and select the _"gpt-3.5-turbo-16k"_ model. Then click the _"Generate summary with..."_ button again.
+We will use the second option. Click on _"Click to configure the prompt and the model"_ at the top of the screen and select the _"gpt-3.5-turbo-16k"_ model. Then click the _"Generate summary with..."_ button again.
 
 <!-- markdownlint-disable-next-line MD033 -->
 <img src="docs/example2-choose-16k-model.jpg" alt="Using a larger context window" height="250"/>
@@ -272,17 +272,33 @@ Why don't we start with the gpt-3.5-turbo-16k model to avoid such problems? Mone
 
 Although in the last section we managed to get a summary from the LLM, it's not a particularly good one. Note how the LLM copies pieces of text from the comments instead of summarizing them.
 
->>> pic here.
+<!-- markdownlint-disable-next-line MD033 -->
+<img src="docs/example3-gpt-35-summary.jpg" alt="GPT-3.5 summary" height="250"/>
 
-We can get better results by using a more powerful model. In this case, we will use the gpt-4 model. Click on _"Click to configure the prompt and the model"_ at the top of the change and select the _"gpt-4"_ model. Then click on the _"Generate summary with..."_ button again.
+We can get better results by using a more powerful model. In this case, we will use the [GPT-4 model](https://openai.com/research/gpt-4). Click on _"Click to configure the prompt and the model"_ at the top of the screen and select the _"gpt-4"_ model. Then click on the _"Generate summary with..."_ button again.
 
-The summaries we get this time are much better. The LLM summarizes the comments instead of copying them.
+We get better summaries with this model. It summarizes the comments instead of copying pieces of text from them.
 
->> pic here.
+<!-- markdownlint-disable-next-line MD033 -->
+<img src="docs/example3-gpt-4-summary.jpg" alt="GPT-4 summary" height="250"/>
 
-Why don't we start with the gpt-4k model? Money. As a general rule, better models are also larger. They need more hardware to run, translating into [higher costs per token](https://openai.com/pricing).
+Why don't we start with the gpt-4k model? Money and higher latency. As a general rule, better models are also larger. They need more hardware to run, translating into [higher costs per token](https://openai.com/pricing) and longer time to generate a summary.
 
-How do we pick a model? It depends on the use case. Start with the smallest (and thus cheaper) model that produces good results. Create some heuristics to decide when to use a more powerful model. For example, switch to a larger model if the comments are larger than a certain size.
+We can see the difference comparing the token count, cost, and time to generate the summary between the gpt-3.5-turbo-16k and gpt-4 models.
+
+Here is token count, cost, and time from the gpt-3.5-turbo-16k model, used in the previous section.
+
+<!-- markdownlint-disable-next-line MD033 -->
+> Total tokens: 5,188 (input: 4,154, output: 1,034) - costs US $0.0166<br>
+> Elapsed time: 32.40 seconds (160.1 tokens/sec)
+
+And here is the token count, cost, and time from the gpt-4 model, used in this section. Even though it is about the same token count, it costs ten times more and takes four times longer to generate the summary.
+
+<!-- markdownlint-disable-next-line MD033 -->
+> Total tokens: 5,045 (input: 4,154, output: 891) - costs US $0.1781<br>
+> Elapsed time: 128.01 seconds (39.4 tokens/sec)
+
+How do we pick a model? It depends on the use case. Start with the smallest (and thus cheaper and faster) model that produces good results. Create some heuristics to decide when to use a more powerful model. For example, switch to a larger model if the comments are larger than a certain size and if the users are willing to wait longer for better results (sometimes an average result faster is better than the perfect result later).
 
 ### << next section goes here >>
 
