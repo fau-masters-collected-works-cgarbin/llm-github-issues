@@ -319,7 +319,7 @@ If we remove from the prompt the line _"Don't waste words. Use short, clear, com
 
 To remove the line, click on _"Click to configure the prompt and the model"_ at the top of the screen and remove the line from the prompt, then click on the _"Generate summary with..."_ button again. Reload the page to restore the line.
 
-Getting the prompt tight is still an experimental process. It goes under the name of _prompt engineering_. These are some references to learn more about prompt engineering.
+Getting the prompt right is still an experimental process. It goes under the name of _prompt engineering_. These are some references to learn more about prompt engineering.
 
 - [Prompt engineering techniques (Azure)](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/advanced-prompt-engineering)
 - [GPT best practices (OpenAI)](https://platform.openai.com/docs/guides/gpt-best-practices)
