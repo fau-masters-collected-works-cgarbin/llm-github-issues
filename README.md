@@ -101,7 +101,7 @@ The JSON objects have more information than we need. Before sending the request 
 
 In this step, we take the JSON objects and convert them into a compact text format. The text format is easier to process and takes less space than the JSON objects.
 
-This is the start of the JSON object returned by the GitHub API for the issue:
+This is the start of the JSON object returned by the GitHub API for the issue.
 
 ```text
 {
@@ -124,7 +124,7 @@ This is the start of the JSON object returned by the GitHub API for the issue:
    ...
 ```
 
-And this is the compact text format we create out of it:
+And this is the compact text format we create out of it.
 
 ```text
 Title: Copilot Chat: [Copilot Chat App] Azure Cognitive Search: kernel.Memory.SearchAsync producing no
@@ -214,12 +214,11 @@ In this section we will go through a few examples to see how to use LLMs in appl
 
 This is a summary of what is covered in the following sections.
 
-TODO: Add links to sections
-
-1. A simple GitHub issue first to see how LLMs can summarize.
-1. A large GitHub issue that doesn't fit in the context window of a basic LLM.
-1. A more powerful model for a better summary.
-1. ...
+1. [A simple GitHub issue first to see how LLMs can summarize](#a-simple-github-issue-to-get-started).
+1. [A large GitHub issue that doesn't fit in the context window of a basic LLM](#a-large-github-issue).
+1. [A more powerful model for a better summary](#a-more-powerful-model).
+1. [The importance of using a good prompt](#the-importance-of-using-a-good-prompt).
+1. [Sometimes we should not use an LLM](#if-all-we-have-is-a-hammer).
 
 ### A simple GitHub issue to get started
 
@@ -329,7 +328,30 @@ Getting the prompt tight is still an experimental process. It goes under the nam
 <!-- markdownlint-disable-next-line MD026 -->
 ### If all we have is a hammer...
 
+Once we learn we can summarize texts with an LLM, we are tempted to use it for everything. Let's say we also want to know the number of comments in the issue. We could ask the LLM by adding it to the prompt.
 
+Click on _"Click to configure the prompt and the model"_ at the top of the screen and add the following line to the prompt. Leave all other lines unchanged.
+
+```text
+You are an experienced developer familiar with GitHub issues.
+The following text was parsed from a GitHub issue and its comments.
+Extract the following information from the issue and comments:
+- Issue: A list with the following items: title, the submitter name, the submission date and
+time, labels, and status (whether the issue is still open or closed).
+- Number of comments in the issue  <-- ** ADD THIS LINE **
+...remainder of the lines...
+```
+
+The LLM will return _a_ number of comments, but most of the time it will be wrong. Select, for example, the issue `https://github.com/microsoft/semantic-kernel/issues/2039` from the sample list. GPT-3.5 will say this issue has six comments, when it actually has eight (at the time of writing - the number may change in the future, but it's certainly not six). The number you get may vary, but will also be wrong.
+
+Why? Because **LLMs are not "executing" instructions**, they are simply [adding one word at a time](https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/). They do not understand what the text means. They just pick the next word based on the previous ones. They are not a replacement for code.
+
+What to do instead? If we have easy access to the information we want, we should just use it. In this case, we can get the number of comments from the GitHub API response.
+
+```python
+    issue, comments = get_github_data(st.session_state.issue_url)
+    num_comments = len(comments)  # <--- This is all we need
+```
 
 ## What we learned in these experiments
 
