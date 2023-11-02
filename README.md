@@ -10,8 +10,8 @@ We will review the following topics:
 1. How to build a prompt to summarize data.
 1. How good are LLMs at summarizing text and GitHub issues in particular.
 1. Developing applications with LLMs: some of their limitations, such as the context window size.
-1. Security concerns.
-1. Their performance (how long it takes to generate a summary) and costs.
+1. The role of prompts in LLMs and how to create good prompts.
+1. When not to use LLMs.
 
 ## Overview of the steps
 
