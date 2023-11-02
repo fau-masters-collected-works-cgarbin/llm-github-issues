@@ -300,7 +300,43 @@ And here is the token count, cost, and time from the gpt-4 model, used in this s
 
 How do we pick a model? It depends on the use case. Start with the smallest (and thus cheaper and faster) model that produces good results. Create some heuristics to decide when to use a more powerful model. For example, switch to a larger model if the comments are larger than a certain size and if the users are willing to wait longer for better results (sometimes an average result faster is better than the perfect result later).
 
-### << next section goes here >>
+### The importance of using a good prompt
+
+Precise instructions in the prompt are important to get good results. To illustrate what a difference a good prompt makes:
+
+1. Select the _"gpt-3.5"_ model.
+1. Select the GitHub issue `https://github.com/openai/openai-python/issues/488` from the sample list.
+1. Click on the _"Generate summary with..."_ button.
+
+We get a summary for the comments like this one.
+
+<!-- markdownlint-disable-next-line MD033 -->
+<img src="docs/prompt-original.jpg" alt="Comment summary with the original prompt"/>
+
+If we remove from the prompt the line _"Don't waste words. Use short, clear, complete sentences. Use active voice. Maximize detail, meaning focus on the content. Quote code snippets if they are relevant."_, we get this summary. Note how the text is more verbose and is indeed "wasting words".
+
+<!-- markdownlint-disable-next-line MD033 -->
+<img src="docs/prompt-after-removal-of-instructions.jpg" alt="Comment summary after removing instructions from the prompt"/>
+
+To remove the line, click on _"Click to configure the prompt and the model"_ at the top of the screen and remove the line from the prompt, then click on the _"Generate summary with..."_ button again. Reload the page to restore the line.
+
+Getting the prompt tight is still an experimental process. It goes under the name of _prompt engineering_. These are some references to learn more about prompt engineering.
+
+- [Prompt engineering techniques (Azure)](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/advanced-prompt-engineering)
+- [GPT best practices (OpenAI)](https://platform.openai.com/docs/guides/gpt-best-practices)
+- [Prompt engineering guide](https://www.promptingguide.ai/)
+
+<!-- markdownlint-disable-next-line MD026 -->
+### If all we have is a hammer...
+
+
+
+## What we learned in these experiments
+
+- LLMs are good at summarizing text, if we use the right prompt.
+- Summarizing larger documents require larger context windows or more sophisticated techniques.
+- Getting good results require good prompts. Good prompts are still an experimental process.
+- Sometimes we should not use an LLM. If we can easily get the information we need from the data, we should do that instead of using an LLM.
 
 ## Modifying and testing the code
 
@@ -343,3 +379,7 @@ OPENAI_API_KEY=<your key>
 ```
 
 It is safe to add the key here. It will never be committed to the repository.
+
+## Related projects
+
+[This project](https://github.com/fau-masters-collected-works-cgarbin/gpt-all-local) lets you ask question on a document and get answers from an LLM. It uses similar techniques as this project, with a major difference: the LLM runs locally, on your computer.

@@ -26,7 +26,7 @@ def display_settings_section():
         if "prompt" not in st.session_state:
             st.session_state.prompt, st.session_state.model = get_default_settings()
 
-        st.session_state.prompt = st.text_area("Prompt", st.session_state.prompt, height=250)
+        st.session_state.prompt = st.text_area("Prompt", st.session_state.prompt, height=300)
         models = ["gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-4"]
         st.session_state.model = st.selectbox("Select model", models, index=models.index(st.session_state.model))
 
