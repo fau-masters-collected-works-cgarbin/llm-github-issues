@@ -73,7 +73,7 @@ Once the application is running, enter the URL for the issue above, `https://git
 - Large language models are not deterministic and may be updated anytime. The results you get may be different from the ones shown here.
 - The GitHub issue may have been updated since the screenshots were taken.
 
-In the next sections, we will go behind the scenes to see how the application works.
+In the following sections, we will go behind the scenes to see how the application works.
 
 ## What happens behind the scenes
 
@@ -281,11 +281,11 @@ We get better summaries with this model. It summarizes the comments instead of c
 <!-- markdownlint-disable-next-line MD033 -->
 <img src="docs/example3-gpt-4-summary.jpg" alt="GPT-4 summary" height="250"/>
 
-Why don't we start with the gpt-4k model? Money and higher latency. As a general rule, better models are also larger. They need more hardware to run, translating into [higher costs per token](https://openai.com/pricing) and longer time to generate a summary.
+Why don't we start with the gpt-4k model? Money and higher latency. As a general rule, better models are also larger. They need more hardware to run, translating into [higher costs per token](https://openai.com/pricing) and a longer time to generate a summary.
 
 We can see the difference comparing the token count, cost, and time to generate the summary between the gpt-3.5-turbo-16k and gpt-4 models.
 
-Here is token count, cost, and time from the gpt-3.5-turbo-16k model, used in the previous section.
+Here is the token count, cost, and time from the gpt-3.5-turbo-16k model, used in the previous section.
 
 <!-- markdownlint-disable-next-line MD033 -->
 > Total tokens: 5,188 (input: 4,154, output: 1,034) - costs US $0.0166<br>
@@ -305,9 +305,9 @@ Precise instructions in the prompt are important to get good results. To illustr
 
 1. Select the _"gpt-3.5"_ model.
 1. Select the GitHub issue `https://github.com/openai/openai-python/issues/488` from the sample list.
-1. Click on the _"Generate summary with..."_ button.
+1. Click the _"Generate summary with..."_ button.
 
-We get a summary for the comments like this one.
+We get a summary of the comments like this one.
 
 <!-- markdownlint-disable-next-line MD033 -->
 <img src="docs/prompt-original.jpg" alt="Comment summary with the original prompt"/>
@@ -328,7 +328,7 @@ Getting the prompt tight is still an experimental process. It goes under the nam
 <!-- markdownlint-disable-next-line MD026 -->
 ### If all we have is a hammer...
 
-Once we learn we can summarize texts with an LLM, we are tempted to use it for everything. Let's say we also want to know the number of comments in the issue. We could ask the LLM by adding it to the prompt.
+Once we learn we can summarize texts with an LLM, we are tempted to use it for everything. Let's say we also want to know the number of comments on the issue. We could ask the LLM by adding it to the prompt.
 
 Click on _"Click to configure the prompt and the model"_ at the top of the screen and add the following line to the prompt. Leave all other lines unchanged.
 
@@ -342,7 +342,7 @@ time, labels, and status (whether the issue is still open or closed).
 ...remainder of the lines...
 ```
 
-The LLM will return _a_ number of comments, but most of the time it will be wrong. Select, for example, the issue `https://github.com/microsoft/semantic-kernel/issues/2039` from the sample list. GPT-3.5 will say this issue has six comments, when it actually has eight (at the time of writing - the number may change in the future, but it's certainly not six). The number you get may vary, but will also be wrong.
+The LLM will return _a_ number of comments, but most of the time it will be wrong. Select, for example, the issue `https://github.com/microsoft/semantic-kernel/issues/2039` from the sample list. GPT-3.5 will say this issue has six comments when it has eight (at the time of writing - the number may change in the future, but it's certainly not six). The number you get may vary, but it will also be wrong.
 
 Why? Because **LLMs are not "executing" instructions**, they are simply [adding one word at a time](https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/). They do not understand what the text means. They just pick the next word based on the previous ones. They are not a replacement for code.
 
@@ -355,9 +355,9 @@ What to do instead? If we have easy access to the information we want, we should
 
 ## What we learned in these experiments
 
-- LLMs are good at summarizing text, if we use the right prompt.
-- Summarizing larger documents require larger context windows or more sophisticated techniques.
-- Getting good results require good prompts. Good prompts are still an experimental process.
+- LLMs are good at summarizing text if we use the right prompt.
+- Summarizing larger documents requires larger context windows or more sophisticated techniques.
+- Getting good results requires good prompts. Good prompts are still an experimental process.
 - Sometimes we should not use an LLM. If we can easily get the information we need from the data, we should do that instead of using an LLM.
 
 ## Modifying and testing the code
@@ -404,4 +404,4 @@ It is safe to add the key here. It will never be committed to the repository.
 
 ## Related projects
 
-[This project](https://github.com/fau-masters-collected-works-cgarbin/gpt-all-local) lets you ask question on a document and get answers from an LLM. It uses similar techniques as this project, with a major difference: the LLM runs locally, on your computer.
+[This project](https://github.com/fau-masters-collected-works-cgarbin/gpt-all-local) lets you ask questions on a document and get answers from an LLM. It uses similar techniques as this project, with a major difference: the LLM runs locally, on your computer.
