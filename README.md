@@ -66,7 +66,7 @@ source venv/bin/activate
 streamlit run app.py
 ```
 
-Once the application is running, enter the URL for the issue above, `https://github.com/microsoft/semantic-kernel/issues/2039`, and press the `Generate summary with <model>` button to generate the summary. It will take a few seconds to complete.
+Once the application is running, enter the URL for the issue above, `https://github.com/microsoft/semantic-kernel/issues/2039`, and click the `Generate summary with <model>` button to generate the summary. It will take a few seconds to complete.
 
 **NOTES**:
 
@@ -231,7 +231,7 @@ source venv/bin/activate
 streamlit run app.py
 ```
 
-Then choose the first issue in the list of samples, _`<https://github.com/openai/openai-python/issues/488> (simple example)`_ and press the _"Generate summary with..."_ button.
+Then choose the first issue in the list of samples, _`<https://github.com/openai/openai-python/issues/488> (simple example)`_ and click the _"Generate summary with..."_ button.
 
 <!-- markdownlint-disable-next-line MD033 -->
 <img src="docs/example1-choose-issue.jpg" alt="Choose the first issue" height="200"/>
@@ -245,7 +245,7 @@ After that we see the LLM's response. Compared with the [original GitHub issue](
 
 ### A large GitHub issue
 
-Now choose the issue _`https://github.com/scikit-learn/scikit-learn/issues/26817 (large, requires GPT-3.5 16k or GPT-4)` and press the _"Generate summary with..."_ button. Do not change the LLM model yet.
+Now choose the issue _`https://github.com/scikit-learn/scikit-learn/issues/26817 (large, requires GPT-3.5 16k or GPT-4)`_ and click the _"Generate summary with..."_ button. Do not change the LLM model yet.
 
 It will fail with this error:
 
