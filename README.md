@@ -238,9 +238,7 @@ Then choose the first issue in the list of samples, _`<https://github.com/openai
 <!-- markdownlint-disable-next-line MD033 -->
 <img src="docs/example1-choose-issue.jpg" alt="Choose the first issue" height="200"/>
 
-After a few seconds we should get a summary like this one. At the top we can see the token count, the cost (derived from the token count), and how long it took for the LLM to generate the summary.
-
-After that we see the LLM's response. Compared with the [original GitHub issue](https://github.com/openai/openai-python/issues/488), the LLM does a good job of summarizing the main points of the issue and the comments. We can see at a glance the main points of the issue and its comments.
+After a few seconds we should get a summary like the picture below. At the top we can see the token count, the cost (derived from the token count), and how long it took for the LLM to generate the summary. After that we see the LLM's response. Compared with the [original GitHub issue](https://github.com/openai/openai-python/issues/488), the LLM does a good job of summarizing the main points of the issue and the comments. We can see at a glance the main points of the issue and its comments.
 
 <!-- markdownlint-disable-next-line MD033 -->
 <img src="docs/example1-summary.png" alt="First issue summary" height="250"/>
@@ -332,7 +330,7 @@ Getting the prompt right is still an experimental process. It goes under the nam
 
 Once we learn we can summarize texts with an LLM, we are tempted to use it for everything. Let's say we also want to know the number of comments on the issue. We could ask the LLM by adding it to the prompt.
 
-Click on _"Click to configure the prompt and the model"_ at the top of the screen and add the following line to the prompt. Leave all other lines unchanged.
+Click on _"Click to configure the prompt and the model"_ at the top of the screen and add the line `- Number of comments in the issue` to the prompt as shown below. Leave all other lines unchanged.
 
 ```text
 You are an experienced developer familiar with GitHub issues.
