@@ -13,6 +13,8 @@ We will review the following topics:
 1. The role of prompts in LLMs and how to create good prompts.
 1. When not to use LLMs.
 
+This [YouTube video](https://youtu.be/5sDD0WNDZkc) walks through the sections below.
+
 ## Overview of the steps
 
 Before we start, let's review what happens behind the scenes when we use LLMs to summarize GitHub issues.
