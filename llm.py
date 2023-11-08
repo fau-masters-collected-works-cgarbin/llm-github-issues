@@ -47,7 +47,7 @@ def _get_openai_client() -> None:
 def _openai_cost(input_tokens: int, output_tokens: int, model: str) -> float:
     """Calculate the cost of the completion.
 
-    IMPORTANT: OpenAI mau change pricing at any time. Consult https://openai.com/pricing and
+    IMPORTANT: OpenAI may change pricing at any time. Consult https://openai.com/pricing and
     update this function accordingly.
     """
     # Price per 1,000 token for each model (from https://openai.com/pricing)
@@ -66,7 +66,7 @@ def _openai_cost(input_tokens: int, output_tokens: int, model: str) -> float:
 
 
 def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResponse:
-    """Get a completion from OpenAI."""
+    """Get a chat completion from OpenAI."""
     # Always instantiate a new client to pick up configuration changes without restarting the program
     client = _get_openai_client()
 
