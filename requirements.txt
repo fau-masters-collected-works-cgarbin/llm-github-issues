@@ -1,7 +1,4 @@
-# openai is installed manually -- see README
-# TODO: Replace with the 1.x official release once it's out
-# openai ~= 1.0
-
+openai ~= 1.2
 python-dotenv ~= 1.0
 requests ~= 2.31
 streamlit ~= 1.27
