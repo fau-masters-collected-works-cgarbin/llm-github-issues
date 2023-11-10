@@ -17,6 +17,7 @@ class LLMResponse:
 
     We use our class instead of returning the native LLM response to make it easier to adapt to different LLMs later.
     """
+
     model: Optional[str] = None
     prompt: Optional[str] = None
     user_input: Optional[str] = None
@@ -39,7 +40,9 @@ def _get_openai_client() -> None:
     api_key = os.getenv("OPENAI_API_KEY")
 
     if not api_key:
-        raise EnvironmentError("OPENAI_API_KEY environment variable not set -- see README.md for instructions")
+        raise EnvironmentError(
+            "OPENAI_API_KEY environment variable not set -- see README.md for instructions"
+        )
 
     return OpenAI(api_key=api_key)
 
@@ -77,7 +80,7 @@ def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResp
             {"role": "system", "content": prompt},
             {"role": "user", "content": user_input},
         ],
-        temperature=0.0  # We want precise and repeatable results
+        temperature=0.0,  # We want precise and repeatable results
     )
     elapsed_time = time.time() - start_time
 
@@ -92,7 +95,7 @@ def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResp
     # This is not exactly the raw response, but it's close enough
     # It assumes the completion object is a pydantic.BaseModel class, which has the `dict()`
     # method we need here
-    response.raw_response = completion.dict()
+    response.raw_response = completion.model_dump()
 
     # Record the number of tokens used for input and output
     response.input_tokens = completion.usage.prompt_tokens
