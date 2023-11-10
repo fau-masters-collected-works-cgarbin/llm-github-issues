@@ -43,16 +43,22 @@ def get_issue_to_show():
         "https://github.com/microsoft/semantic-kernel/issues/2039 (large comments, GPT-4 summarizes it better)",
         "https://github.com/qjebbs/vscode-plantuml/issues/255 (large number of comments)",
     ]
-    selected_url = st.selectbox("Choose an example URL from this list or type your own below",
-                                example_urls, placeholder="Pick from this list or enter an URL below", index=None)
+    selected_url = st.selectbox(
+        "Choose an example URL from this list or type your own below",
+        example_urls,
+        placeholder="Pick from this list or enter an URL below",
+        index=None,
+    )
     if selected_url:
         # Discard the comment text after the URL to make it valid
         st.session_state.issue_url = selected_url.split(" (")[0]
 
-    st.session_state.issue_url = st.text_input("Enter GitHub issue URL", value=st.session_state.issue_url,
-                                               label_visibility="collapsed",
-                                               placeholder=("Enter URL to GitHub issue or pick an example"
-                                                            " from the list above"))
+    st.session_state.issue_url = st.text_input(
+        "Enter GitHub issue URL",
+        value=st.session_state.issue_url,
+        label_visibility="collapsed",
+        placeholder=("Enter URL to GitHub issue or pick an example" " from the list above"),
+    )
 
 
 def get_github_data(issue_url: str) -> (dict, dict):
@@ -101,8 +107,12 @@ def show_github_post_processed_data(issue: str, comments: str):
 def show_llm_raw_data(response: llm.LLMResponse):
     """Show the raw data to/from the LLM."""
     r = response  # Shorter name to make the code easier to read
-    st.write((f"Total tokens: {r.total_tokens:,} (input: {r.input_tokens:,}, output: {r.output_tokens:,})"
-             f"  - costs US ${r.cost:.4f}"))
+    st.write(
+        (
+            f"Total tokens: {r.total_tokens:,} (input: {r.input_tokens:,}, output: {r.output_tokens:,})"
+            f"  - costs US ${r.cost:.4f}"
+        )
+    )
 
     tokens_sec = r.total_tokens / r.elapsed_time
     st.write(f"Elapsed time: {r.elapsed_time:.2f} seconds ({tokens_sec:,.1f} tokens/sec)")
@@ -140,8 +150,7 @@ def main():
             issue, comments = get_github_data(st.session_state.issue_url)
             parsed_issue = gh.parse_issue(issue)
             parsed_comments = gh.parse_comments(comments)
-            response = get_llm_response(st.session_state.model, st.session_state.prompt,
-                                        parsed_issue, parsed_comments)
+            response = get_llm_response(st.session_state.model, st.session_state.prompt, parsed_issue, parsed_comments)
 
             tabs = st.tabs(["LLM data", "Raw GitHub data", "Parsed GitHub data"])
             with tabs[0]:

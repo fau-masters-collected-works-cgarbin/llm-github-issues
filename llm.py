@@ -40,9 +40,7 @@ def _get_openai_client() -> None:
     api_key = os.getenv("OPENAI_API_KEY")
 
     if not api_key:
-        raise EnvironmentError(
-            "OPENAI_API_KEY environment variable not set -- see README.md for instructions"
-        )
+        raise EnvironmentError("OPENAI_API_KEY environment variable not set -- see README.md for instructions")
 
     return OpenAI(api_key=api_key)
 
