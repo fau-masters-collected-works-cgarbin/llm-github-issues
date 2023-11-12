@@ -34,7 +34,7 @@ class LLMResponse:
         return self.input_tokens + self.output_tokens
 
 
-def _get_openai_client() -> None:
+def _get_openai_client() -> OpenAI:
     """Get a client for OpenAI."""
     dotenv.load_dotenv()
     api_key = os.getenv("OPENAI_API_KEY")

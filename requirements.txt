@@ -4,6 +4,4 @@ requests ~= 2.31
 streamlit ~= 1.27
 
 # Linters and formatters (use the latest versions)
-pylint
-black
-prospector
+ruff
