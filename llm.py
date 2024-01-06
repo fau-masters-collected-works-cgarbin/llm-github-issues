@@ -3,10 +3,10 @@
 It currently uses OpenAI. The intention of this module is to abstract away the LLM so that it can be easily replaced
 with a different LLM later if needed.
 """
-from dataclasses import dataclass
 import os
 import time
-from typing import Optional
+from dataclasses import dataclass, field
+
 import dotenv
 from openai import OpenAI
 
@@ -18,15 +18,15 @@ class LLMResponse:
     We use our class instead of returning the native LLM response to make it easier to adapt to different LLMs later.
     """
 
-    model: Optional[str] = None
-    prompt: Optional[str] = None
-    user_input: Optional[str] = None
-    llm_response: Optional[str] = None
-    input_tokens: Optional[int] = None
-    output_tokens: Optional[int] = None
-    cost: Optional[float] = None
-    raw_response: Optional[dict] = None
-    elapsed_time: Optional[float] = None
+    model: str = ""
+    prompt: str = ""
+    user_input: str = ""
+    llm_response: str = ""
+    input_tokens: int = 0
+    output_tokens: int = 0
+    cost: float = 0.0
+    raw_response: dict = field(default_factory=dict)
+    elapsed_time: float = 0.0
 
     @property
     def total_tokens(self):
@@ -88,7 +88,7 @@ def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResp
     response.model = model
     response.prompt = prompt
     response.user_input = user_input
-    response.llm_response = completion.choices[0].message.content
+    response.llm_response = completion.choices[0].message.content  # type: ignore
 
     # This is not exactly the raw response, but it's close enough
     # It assumes the completion object is a pydantic.BaseModel class, which has the `dict()`
@@ -96,8 +96,8 @@ def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResp
     response.raw_response = completion.model_dump()
 
     # Record the number of tokens used for input and output
-    response.input_tokens = completion.usage.prompt_tokens
-    response.output_tokens = completion.usage.completion_tokens
+    response.input_tokens = completion.usage.prompt_tokens  # type: ignore
+    response.output_tokens = completion.usage.completion_tokens  # type: ignore
 
     # Records costs (depends on the tokens and model - set them first)
     response.cost = _openai_cost(response.input_tokens, response.output_tokens, model)
