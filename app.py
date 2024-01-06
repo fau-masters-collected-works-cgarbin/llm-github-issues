@@ -27,7 +27,7 @@ def display_settings_section():
             st.session_state.prompt, st.session_state.model = get_default_settings()
 
         st.session_state.prompt = st.text_area("Prompt", st.session_state.prompt, height=300)
-        models = ["gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-4"]
+        models = llm.models()
         st.session_state.model = st.selectbox("Select model", models, index=models.index(st.session_state.model))
 
 
@@ -39,7 +39,7 @@ def get_issue_to_show():
     example_urls = [
         "https://github.com/openai/openai-python/issues/488 (simple example)",
         "https://github.com/openai/openai-python/issues/650 (also simple, but more code blocks)",
-        "https://github.com/scikit-learn/scikit-learn/issues/26817 (large, requires GPT-3.5 16k or GPT-4)",
+        "https://github.com/scikit-learn/scikit-learn/issues/26817 (larger issue)",
         "https://github.com/microsoft/semantic-kernel/issues/2039 (large comments, GPT-4 summarizes it better)",
         "https://github.com/qjebbs/vscode-plantuml/issues/255 (large number of comments)",
     ]
@@ -61,7 +61,7 @@ def get_issue_to_show():
     )
 
 
-def get_github_data(issue_url: str) -> (dict, dict):
+def get_github_data(issue_url: str) -> tuple[dict, dict]:
     """Get the issue and comments from GitHub."""
     with st.spinner("Waiting for GitHub response..."):
         issue = gh.get_issue(issue_url)

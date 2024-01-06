@@ -33,6 +33,14 @@ class LLMResponse:
         """Calculate the total number of tokens used."""
         return self.input_tokens + self.output_tokens
 
+# Support models and costs
+# Price per 1,000 token for each model (from https://openai.com/pricing)
+_MODEL_DATA = {
+    "gpt-3.5-turbo-1106": {"input": 0.001, "completion": 0.002},
+    "gpt-4": {"input": 0.03, "completion": 0.06},
+    "gpt-4-32k": {"input": 0.06, "completion": 0.12},
+}
+
 
 def _get_openai_client() -> OpenAI:
     """Get a client for OpenAI."""
@@ -51,18 +59,10 @@ def _openai_cost(input_tokens: int, output_tokens: int, model: str) -> float:
     IMPORTANT: OpenAI may change pricing at any time. Consult https://openai.com/pricing and
     update this function accordingly.
     """
-    # Price per 1,000 token for each model (from https://openai.com/pricing)
-    token_costs = {
-        "gpt-3.5-turbo": {"input": 0.0015, "completion": 0.002},
-        "gpt-3.5-turbo-16k": {"input": 0.003, "completion": 0.004},
-        "gpt-4": {"input": 0.03, "completion": 0.06},
-        "gpt-4-32k": {"input": 0.06, "completion": 0.12},
-    }
-
     # Note that we use the model name without checking
     # This is intentional to clearly flag when we need to update the code
-    input_cost = input_tokens * token_costs[model]["input"] / 1_000
-    output_cost = output_tokens * token_costs[model]["completion"] / 1_000
+    input_cost = input_tokens * _MODEL_DATA[model]["input"] / 1_000
+    output_cost = output_tokens * _MODEL_DATA[model]["completion"] / 1_000
     return input_cost + output_cost
 
 
@@ -104,6 +104,10 @@ def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResp
 
     return response
 
+def models():
+    """Get the list of supported models."""
+    # Return the keys in the token_costs dictionary
+    return list(_MODEL_DATA.keys())
 
 def chat_completion(model, prompt: str, user_input: str) -> LLMResponse:
     """Get a completion from the LLM."""
