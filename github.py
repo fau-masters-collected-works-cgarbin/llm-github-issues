@@ -75,7 +75,11 @@ def get_issue_comments(issue: dict) -> dict:
     Returns:
         dict: Comments data.
     """
-    return _invoke_github_api(issue["comments_url"], "")
+    url = issue["comments_url"]
+    # Request the maximum number of comments per page
+    # Note that pagination is not supported - if there are more than 100 comments, only the first 100 will be returned
+    url += "?per_page=100"
+    return _invoke_github_api(url, "")
 
 
 def parse_issue(issue: dict) -> str:
