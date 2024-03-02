@@ -33,18 +33,22 @@ class LLMResponse:
         """Calculate the total number of tokens used."""
         return self.input_tokens + self.output_tokens
 
+
 # Support models and costs
 # Price per 1,000 token for each model (from https://openai.com/pricing)
 _MODEL_DATA = {
-    "gpt-3.5-turbo-1106": {"input": 0.001, "completion": 0.002},
-    "gpt-4": {"input": 0.03, "completion": 0.06},
-    "gpt-4-32k": {"input": 0.06, "completion": 0.12},
+    "gpt-3.5-turbo-0125": {"input": 0.0005, "completion": 0.0015},
+    "gpt-3.5-turbo-1106": {"input": 0.0010, "completion": 0.0020},
+    "gpt-4-0125-preview": {"input": 0.0100, "completion": 0.0300},
+    "gpt-4-1106-preview": {"input": 0.0100, "completion": 0.0300},
+    "gpt-4-32k": {"input": 0.0600, "completion": 0.1200},
 }
 
 
 def _get_openai_client() -> OpenAI:
     """Get a client for OpenAI."""
-    dotenv.load_dotenv()
+    # Always override the environment variables with the .env file to allow key changes without restarting the program
+    dotenv.load_dotenv(override=True)
     api_key = os.getenv("OPENAI_API_KEY")
 
     if not api_key:
@@ -104,10 +108,12 @@ def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResp
 
     return response
 
+
 def models():
     """Get the list of supported models."""
     # Return the keys in the token_costs dictionary
     return list(_MODEL_DATA.keys())
+
 
 def chat_completion(model, prompt: str, user_input: str) -> LLMResponse:
     """Get a completion from the LLM."""
