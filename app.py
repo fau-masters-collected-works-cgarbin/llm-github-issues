@@ -39,7 +39,7 @@ def get_issue_to_show():
     example_urls = [
         "https://github.com/openai/openai-python/issues/488 (simple example)",
         "https://github.com/openai/openai-python/issues/650 (also simple, but more code blocks)",
-        "https://github.com/scikit-learn/scikit-learn/issues/26817 (larger issue)",
+        "https://github.com/scikit-learn/scikit-learn/issues/9354 (large issue, requires GPT-4's large context window)",
         "https://github.com/microsoft/semantic-kernel/issues/2039 (large comments, GPT-4 summarizes it better)",
         "https://github.com/qjebbs/vscode-plantuml/issues/255 (large number of comments)",
     ]

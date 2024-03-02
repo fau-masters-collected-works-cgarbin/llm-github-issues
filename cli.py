@@ -14,9 +14,8 @@ Some test data to use:
      - https://github.com/scikit-learn/scikit-learn
      - 27435
 
-    This one doesn't fit in the standard GPT-3.5 context window - good test for the 16k token version.
-     - https://github.com/scikit-learn/scikit-learn
-     - 26817
+    Large issue - needs GPT-4's large context window
+     - https://github.com/scikit-learn/scikit-learn/issues/9354
 
     This one has several comments. The large list of comments seems to cause the LLM to stop summarizing
     then mid-way through the issue (tested with GPT-3.5).
