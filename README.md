@@ -269,7 +269,7 @@ Why don't we start with a GPT-4 model to avoid such problems? Money. As a genera
 
 ### Better summaries with a more powerful model
 
-As a result of using GPT-4, we also get bette summaries.
+As a result of using GPT-4, we also get better summaries.
 
 Why don't we use GPT-4 from the start? Money and higher latency. As a general rule, better models are also larger. They need more hardware to run, translating into [higher costs per token](https://openai.com/pricing) and a longer time to generate a summary.
 

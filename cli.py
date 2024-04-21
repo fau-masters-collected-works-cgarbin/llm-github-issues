@@ -23,6 +23,7 @@ Some test data to use:
     has the link, which can be used for phishing and other attacks.
     - https://github.com/qjebbs/vscode-plantuml/issues/255
 """
+
 import configparser
 import github
 import llm
@@ -51,6 +52,7 @@ def get_llm_answer(parsed_issue, parsed_comments):
     """Get the LLM answer."""
     # Always read the config file to allow for changes without restarting the CLI
     model, prompt = get_model_and_prompt()
+    print(f"Using model: {model}")
     user_input = f"{parsed_issue}\n{parsed_comments}"
     response = llm.chat_completion(model, prompt, user_input)
     return response
