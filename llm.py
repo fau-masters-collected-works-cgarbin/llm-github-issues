@@ -86,6 +86,7 @@ def _openai_chat_completion(model: str, prompt: str, user_input: str) -> LLMResp
         temperature=0.0,  # We want precise and repeatable results
     )
     elapsed_time = time.time() - start_time
+    client.close()
 
     # Record the request and the response
     response = LLMResponse()
