@@ -1,7 +1,7 @@
-openai ~= 1.2.0
+openai ~= 1.23.2
 python-dotenv ~= 1.0.0
 requests ~= 2.31.0
-streamlit ~= 1.29.0
+streamlit ~= 1.33.0
 
 # Linters and formatters (use the latest versions)
 ruff
