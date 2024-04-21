@@ -3,6 +3,7 @@
 It currently uses OpenAI. The intention of this module is to abstract away the LLM so that it can be easily replaced
 with a different LLM later if needed.
 """
+
 import os
 import time
 from dataclasses import dataclass, field
@@ -34,14 +35,12 @@ class LLMResponse:
         return self.input_tokens + self.output_tokens
 
 
-# Support models and costs
-# Price per 1,000 token for each model (from https://openai.com/pricing)
+# Supported models and costs
+# Price per 1,000,000 tokens for each model (from https://openai.com/pricing)
+_COST_UNIT = 1_000_000  # 1 million tokens
 _MODEL_DATA = {
-    "gpt-3.5-turbo-0125": {"input": 0.0005, "completion": 0.0015},
-    "gpt-3.5-turbo-1106": {"input": 0.0010, "completion": 0.0020},
-    "gpt-4-0125-preview": {"input": 0.0100, "completion": 0.0300},
-    "gpt-4-1106-preview": {"input": 0.0100, "completion": 0.0300},
-    "gpt-4-32k": {"input": 0.0600, "completion": 0.1200},
+    "gpt-3.5-turbo-0125": {"input": 0.5, "output": 1.5},
+    "gpt-4-turbo-2024-04-09": {"input": 10.0, "output": 30.0},
 }
 
 
@@ -63,10 +62,12 @@ def _openai_cost(input_tokens: int, output_tokens: int, model: str) -> float:
     IMPORTANT: OpenAI may change pricing at any time. Consult https://openai.com/pricing and
     update this function accordingly.
     """
-    # Note that we use the model name without checking
-    # This is intentional to clearly flag when we need to update the code
-    input_cost = input_tokens * _MODEL_DATA[model]["input"] / 1_000
-    output_cost = output_tokens * _MODEL_DATA[model]["completion"] / 1_000
+    if model not in _MODEL_DATA:
+        # Flag the error, but don't interrupt the program
+        return -1.0
+
+    input_cost = input_tokens * _MODEL_DATA[model]["input"] / _COST_UNIT
+    output_cost = output_tokens * _MODEL_DATA[model]["output"] / _COST_UNIT
     return input_cost + output_cost
 
 
