@@ -1,4 +1,6 @@
 .DS_Store
+.ruff_cache
+.vscode
 venv
 __pycache__
 
