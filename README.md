@@ -338,7 +338,9 @@ time, labels, and status (whether the issue is still open or closed).
 
 The LLM will return _a_ number of comments, but it will usually be wrong. Select, for example, the issue `https://github.com/qjebbs/vscode-plantuml/issues/255` from the sample list. None of the models get the number of comments correctly.
 
-Why? Because **LLMs are not "executing" instructions**, they are simply [generating one token at a time](https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/). They do not understand what the generated text means. They just pick the next token based on the previous ones. They are not a replacement for code.
+Why? Because **LLMs are not "executing" instructions**, they are simply [generating one token at a time](https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/).
+
+This is an important concept to keep in mind. **LLMs do not understand what the text means**. They just pick the next token based on the previous ones. They are not a replacement for code.
 
 What to do instead? If we have easy access to the information we want, we should just use it. In this case, we can get the number of comments from the GitHub API response.
 
