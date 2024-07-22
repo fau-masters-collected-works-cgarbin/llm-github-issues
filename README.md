@@ -221,6 +221,7 @@ This is a summary of what is covered in the following sections.
 1. [A simple GitHub issue first to see how LLMs can summarize](#a-simple-github-issue-to-get-started).
 1. [A large GitHub issue that doesn't fit in the context window of a basic LLM](#a-large-github-issue).
 1. [A more powerful model for a better summary](#better-summaries-with-a-more-powerful-model).
+1. [The introduction of GPT-4o mini](#the-introduction-of-gpt-4o-mini).
 1. [The importance of using a good prompt](#the-importance-of-using-a-good-prompt).
 1. [Sometimes we should not use an LLM](#if-all-we-have-is-a-hammer).
 
