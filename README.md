@@ -289,7 +289,7 @@ The message is that unless you have a specific reason for using GPT-3.5 Turbo, y
 
 | GPT-4o summary | GPT-4o mini summary |
 |---------|---------|
-| 3,859 tokens, US $0.0303, 13.2s | 4,060, tokens, US $0.0012, 15.3s |
+| 3,859 tokens, US $0.0303 | 4,060, tokens, US $0.0012 |
 | ![GPT-4o summary](./docs/gpt-4o-summary.png) | ![GPT-4o mini summary](./docs/gpt-4o-mini-summary.png) |
 
 ### The importance of using a good prompt
