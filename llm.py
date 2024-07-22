@@ -35,12 +35,12 @@ class LLMResponse:
         return self.input_tokens + self.output_tokens
 
 
-# Supported models and costs
-# Price per 1,000,000 tokens for each model (from https://openai.com/pricing)
-_COST_UNIT = 1_000_000  # 1 million tokens
+# Support models and costs from https://openai.com/pricing
+_COST_UNIT = 1_000_000  # Prices are per 1,000,000 token for each model
 _MODEL_DATA = {
-    "gpt-3.5-turbo-0125": {"input": 0.5, "output": 1.5},
-    "gpt-4-turbo-2024-04-09": {"input": 10.0, "output": 30.0},
+    "gpt-3.5-turbo": {"input": 0.5, "output": 1.5},
+    "gpt-4o": {"input": 5.0, "output": 15.0},
+    "gpt-4o-mini": {"input": 0.15, "output": 0.6},
 }
 
 
